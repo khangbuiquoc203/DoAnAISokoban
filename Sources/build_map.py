@@ -2,19 +2,8 @@ import numpy as np
 import os
 import pygame
 import re
-'''
-//========================//
-//    GET SOME ASSETS     //
-//========================//
-'''
-assets_path = os.getcwd() + "\\..\\Assets"
-os.chdir(assets_path)
-player = pygame.image.load(os.getcwd() + '\\player.png')
-wall = pygame.image.load(os.getcwd() + '\\wall.png')
-box = pygame.image.load(os.getcwd() + '\\box.png')
-point = pygame.image.load(os.getcwd() + '\\point.png')
-space = pygame.image.load(os.getcwd() + '\\space.png')
-init_background = pygame.image.load(os.getcwd() + '\\init_background.png')
+import button
+
 
 
 '''
@@ -30,6 +19,40 @@ pygame.display.set_caption('Sokoban Game')
 BACKGROUND = (0, 0, 0) #BLACK
 WHITE = (255, 255, 255)
 stage = 29
+#text_font=pygame.font.Font("Arial",30)
+
+'''
+//========================//
+//    GET SOME ASSETS     //
+//========================//
+'''
+assets_path = os.getcwd() + "\\..\\Assets"
+os.chdir(assets_path)
+player = pygame.image.load(os.getcwd() + '\\player.png')
+wall = pygame.image.load(os.getcwd() + '\\wall.png')
+box = pygame.image.load(os.getcwd() + '\\box.png')
+point = pygame.image.load(os.getcwd() + '\\point.png')
+space = pygame.image.load(os.getcwd() + '\\space.png')
+init_background = pygame.image.load(os.getcwd() + '\\init_background.png')
+
+text_font=pygame.font.Font(os.getcwd() + '\\game.ttf',45)
+textsmall_font=pygame.font.Font(os.getcwd() + '\\game.ttf',30)
+
+''' DRAW BUTTON'''
+start_img = pygame.image.load(os.getcwd()+'\\start_btn.png').convert_alpha()
+solve_img = pygame.image.load(os.getcwd()+'\\solve_btn.png').convert_alpha()
+reset_img = pygame.image.load(os.getcwd()+'\\reset_btn.png').convert_alpha()
+algos_img = pygame.image.load(os.getcwd()+'\\algos_btn.png').convert_alpha()
+player_img = pygame.image.load(os.getcwd()+'\\player_name.png').convert_alpha()
+level_img = pygame.image.load(os.getcwd()+'\\level.png').convert_alpha()
+
+
+player_button = button.Button(780, 200, player_img, 1)
+level_button = button.Button(780, 260, level_img, 1)
+start_button = button.Button(780, 320, start_img, 1)
+solve_button = button.Button(780, 380, solve_img, 1)
+reset_button = button.Button(780, 440, reset_img, 1)
+algos_button = button.Button(780, 500, algos_img, 1)
 
 
 '''
@@ -49,6 +72,15 @@ def get_number (file):
         return int (match.group(1)) 
     else: 
         return 0
+    
+'''
+//============================//
+//         DRAW TEXT          //
+//============================//
+'''
+def draw_text(text, font, text_col, x, y):
+    img=font.render(text, True, text_col)
+    screen.blit(img, (x,y))
 
 ''' 
 //==============================//
@@ -131,14 +163,16 @@ def renderMap(board):
             if board[i][j] == '@':
                 screen.blit(player, (j * tile_size + map_offset_x, i * tile_size + map_offset_y))
 
-
+''' VARIABLE '''
+algorithm = "BFS"
 ''' 
 //===========================//
 //      SOKOBAN FUNCTION     //
 //===========================//
 '''
-def sokoban(stage):
+def sokoban():
     running = True 
+    global algorithm
     pygame.init()
     pygame.font.init()
     screen = pygame.display.set_mode((1200, 760))
@@ -147,11 +181,29 @@ def sokoban(stage):
     WHITE = (255, 255, 255)
     while running:     
         screen.blit(init_background, (0, 0))
-        initGame(maps[stage])
+        initGame(maps[29])
+        display()
+        if solve_button.draw(screen):
+            print('SOLVE')
+        if reset_button.draw(screen):
+            print('RESET')
+        if player_button.draw(screen):
+            print('RESET')
+        if level_button.draw(screen):
+            print('RESET')
+        if algos_button.draw(screen):
+            if algorithm == "BFS":
+                algorithm = "A Star"
+            else:
+                algorithm = "BFS"
+        if start_button.draw(screen):
+            print('RESET')
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            pygame.display.flip()
+        pygame.display.update()
+
 
     pygame.quit()
 
@@ -166,6 +218,22 @@ def sokoban(stage):
 def initGame(map):
 	renderMap(map)
 
+def display():
+    # Vẽ các text border
+    pygame.draw.rect(screen, (255, 255, 255), (930,200,150,40), width=3, border_bottom_left_radius=5, border_bottom_right_radius=5, border_top_left_radius=5, border_top_right_radius=5)
+    pygame.draw.rect(screen, (255, 255, 255), (930,500,200,40), width=3, border_bottom_left_radius=5, border_bottom_right_radius=5, border_top_left_radius=5, border_top_right_radius=5)
+    draw_text("Sokoban Game", text_font, (255, 255, 255), 800, 80)
+    draw_text("Score: ", textsmall_font, (255, 255, 255), 100, 15)
+    draw_text("Time: ", textsmall_font, (255, 255, 255), 400, 15)
+
+    mapText = textsmall_font.render("Lv. " + str(1), True, WHITE)
+    mapRect = mapText.get_rect(center=(955, 280))
+    screen.blit(mapText, mapRect)
+
+ 
+    algorithmText = textsmall_font.render(str(algorithm), True, WHITE)
+    algorithmRect = algorithmText.get_rect(center=(1025, 520))
+    screen.blit(algorithmText, algorithmRect)
 
 '''
 //========================//
@@ -176,11 +244,11 @@ def initGame(map):
 '''
 maps = get_boards()
                 
-# def main():
-#     sokoban()
+def main():
+    sokoban()
 
-# if __name__ == "__main__":
-# 	main()
+if __name__ == "__main__":
+	main()
 
 
 
