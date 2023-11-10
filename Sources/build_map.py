@@ -170,7 +170,7 @@ algorithm = "BFS"
 //      SOKOBAN FUNCTION     //
 //===========================//
 '''
-def sokoban():
+def sokoban(stage):
     running = True 
     global algorithm
     pygame.init()
@@ -181,8 +181,8 @@ def sokoban():
     WHITE = (255, 255, 255)
     while running:     
         screen.blit(init_background, (0, 0))
-        initGame(maps[29])
-        display()
+        initGame(maps[stage])
+        display(stage)
         if solve_button.draw(screen):
             print('SOLVE')
         if reset_button.draw(screen):
@@ -218,7 +218,7 @@ def sokoban():
 def initGame(map):
 	renderMap(map)
 
-def display():
+def display(stage):
     # Vẽ các text border
     pygame.draw.rect(screen, (255, 255, 255), (930,200,150,40), width=3, border_bottom_left_radius=5, border_bottom_right_radius=5, border_top_left_radius=5, border_top_right_radius=5)
     pygame.draw.rect(screen, (255, 255, 255), (930,500,200,40), width=3, border_bottom_left_radius=5, border_bottom_right_radius=5, border_top_left_radius=5, border_top_right_radius=5)
@@ -226,7 +226,7 @@ def display():
     draw_text("Score: ", textsmall_font, (255, 255, 255), 100, 15)
     draw_text("Time: ", textsmall_font, (255, 255, 255), 400, 15)
 
-    mapText = textsmall_font.render("Lv. " + str(1), True, WHITE)
+    mapText = textsmall_font.render("Lv. " + str(stage+1), True, WHITE)
     mapRect = mapText.get_rect(center=(955, 280))
     screen.blit(mapText, mapRect)
 
