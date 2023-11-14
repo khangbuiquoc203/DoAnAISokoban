@@ -3,8 +3,7 @@ import os
 import pygame
 import re
 import button
-
-
+import support_func as spf
 
 '''
 //========================//
@@ -66,6 +65,32 @@ path_board = os.getcwd() + '\\..\\Testcases'
 path_checkpoint = os.getcwd() + '\\..\\Checkpoints'
 
 
+''' 
+//==========================================//
+//     READ A SINGLE CHECKPOINT TXT FILE    //
+//==========================================//
+'''
+def get_pair(path):
+    result = np.loadtxt(f"{path}", dtype=int, delimiter=',')
+    return result
+
+'''
+//==========================================//
+//          TRAVERSE CHECKPOINT FILES       //
+//      AND RETURN A SET OF CHECKPOINT      //
+//==========================================//
+'''
+def get_check_points():
+    os.chdir(path_checkpoint)
+    list_check_point = []
+    for file in sorted(os.listdir(), key=get_number):
+        if file.endswith(".txt"):
+            file_path = f"{path_checkpoint}\{file}"
+            check_point = get_pair(file_path)
+            list_check_point.append(check_point)
+    return list_check_point
+
+
 def get_number (file): 
     match = re.search ('(\d+)', file) 
     if match:
@@ -98,7 +123,6 @@ def get_boards():
             list_boards.append(board)
     return list_boards
 
-
 '''
 //==========================================//
 //      READ A SINGLE TESTCASE TXT FILE     //
@@ -109,7 +133,6 @@ def get_board(path):
     for row in result:
         format_row(row)
     return result
-
 
 '''
 //===========================//
@@ -179,9 +202,15 @@ def sokoban(stage):
     pygame.display.set_caption('Sokoban Game')
     BACKGROUND = (0, 0, 0) #BLACK
     WHITE = (255, 255, 255)
+    moved = False
+    new_board = []
     while running:     
         screen.blit(init_background, (0, 0))
-        initGame(maps[stage])
+        if moved == False:
+            initGame(maps[stage])
+            new_board = maps[stage]
+        else:
+            initGame(new_board)
         display(stage)
         if solve_button.draw(screen):
             print('SOLVE')
@@ -200,6 +229,19 @@ def sokoban(stage):
             print('RESET')
 
         for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    new_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage])
+                    moved = True
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    new_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])
+                    moved = True
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    new_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])
+                    moved = True
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    new_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])
+                    moved = True
             if event.type == pygame.QUIT:
                 running = False
         pygame.display.update()
@@ -242,8 +284,8 @@ def display(stage):
 //      CHECK POINTS      //
 //========================//
 '''
-maps = get_boards()
-                
+maps = get_boards()      
+list_check_points = get_check_points()
 def main():
     sokoban()
 
