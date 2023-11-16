@@ -25,6 +25,15 @@ def compare_matrix(board_A, board_B):
                 return False
     return True
 
+''' CHECK WHETHER THE BOARD IS GOAL OR NOT '''
+def check_win(board, list_check_point):
+    '''return true if all check points are coverred by boxes'''
+    for p in list_check_point:
+        if board[p[0]][p[1]] != '$':
+            return False
+    return True
+
+
 
 ''' CHECK WHETHER A SINGLE BOX IS ON A CHECKPOINT '''
 def is_box_on_check_point(box, list_check_point):

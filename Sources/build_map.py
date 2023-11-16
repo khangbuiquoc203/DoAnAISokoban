@@ -231,16 +231,24 @@ def sokoban(stage):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    new_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage])
+                    new_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage]) 
+                    if spf.check_win(new_board, list_check_points[stage]):
+                        sokoban(stage+1);
                     moved = True
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     new_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])
+                    if spf.check_win(new_board, list_check_points[stage]):
+                        sokoban(stage+1);
                     moved = True
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     new_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])
+                    if spf.check_win(new_board, list_check_points[stage]):
+                        sokoban(stage+1);
                     moved = True
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     new_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])
+                    if spf.check_win(new_board, list_check_points[stage]):
+                        sokoban(stage+1);
                     moved = True
             if event.type == pygame.QUIT:
                 running = False
