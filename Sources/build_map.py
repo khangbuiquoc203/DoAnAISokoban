@@ -4,7 +4,7 @@ import pygame
 import re
 import button
 import support_func as spf
-
+import ctypes
 '''
 //========================//
 //         PYGAME         //
@@ -27,7 +27,7 @@ stage = 29
 '''
 assets_path = os.getcwd() + "\\..\\Assets"
 os.chdir(assets_path)
-player = pygame.image.load(os.getcwd() + '\\player.png')
+player = pygame.image.load(os.getcwd() + '\\playerleft.png')
 wall = pygame.image.load(os.getcwd() + '\\wall.png')
 box = pygame.image.load(os.getcwd() + '\\box.png')
 point = pygame.image.load(os.getcwd() + '\\point.png')
@@ -196,6 +196,7 @@ algorithm = "BFS"
 def sokoban(stage):
     running = True 
     global algorithm
+    global player
     pygame.init()
     pygame.font.init()
     screen = pygame.display.set_mode((1200, 760))
@@ -212,6 +213,7 @@ def sokoban(stage):
         else:
             initGame(new_board)
         display(stage)
+        
         if solve_button.draw(screen):
             print('SOLVE')
         if reset_button.draw(screen):
@@ -230,34 +232,47 @@ def sokoban(stage):
                 algorithm = "BFS"
         if start_button.draw(screen):
             print('RESET')
-
+            
+        
+            
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     new_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage]) 
-                    if spf.check_win(new_board, list_check_points[stage]):
-                        sokoban(stage+1);
+                    sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
+                    sound.play()
                     moved = True
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     new_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])
-                    if spf.check_win(new_board, list_check_points[stage]):
-                        sokoban(stage+1);
+                    sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
+                    sound.play()
                     moved = True
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     new_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])
-                    if spf.check_win(new_board, list_check_points[stage]):
-                        sokoban(stage+1);
+                    player = pygame.image.load(assets_path + '\\playerleft.png')
+                    sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
+                    sound.play()
                     moved = True
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     new_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])
-                    if spf.check_win(new_board, list_check_points[stage]):
-                        sokoban(stage+1);
+                    player = pygame.image.load(assets_path + '\\playerright.png')
+                    sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
+                    sound.play()
                     moved = True
             if event.type == pygame.QUIT:
                 running = False
         pygame.display.update()
+        
+        
 
-
+        if spf.check_win(new_board, list_check_points[stage]):
+            initGame(maps[stage+1])
+            new_board = maps[stage+1]
+            stage+=1
+            #Mbox('', 'QUA MÀN', 0)
+            moved == False
+            sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
+            sound.play()
     pygame.quit()
 
     
@@ -270,6 +285,9 @@ def sokoban(stage):
 '''
 def initGame(map):
 	renderMap(map)
+
+def Mbox(title, text, style):
+    ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
 def display(stage):
     # Vẽ các text border
