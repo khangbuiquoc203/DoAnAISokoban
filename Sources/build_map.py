@@ -216,6 +216,9 @@ def sokoban(stage):
             print('SOLVE')
         if reset_button.draw(screen):
             print('RESET')
+            initGame(maps[stage])
+            new_board = maps[stage]
+            moved == False
         if player_button.draw(screen):
             print('RESET')
         if level_button.draw(screen):
