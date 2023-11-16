@@ -16,37 +16,64 @@ def init():
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.exit()  
+                sys.exit()
         check = login(screen)
         if check == 1:
             pygame.quit()
             sys.exit()
-        elif check == 2:
-            print("success!")
-            game(screen)
+        else:
+            print("success!\nHello",check)
+            game(screen, check)
 
+def draw_background(screen):
+    assets_path = os.getcwd() + "\\..\\Assets\\init_background.png"
+    background = pygame.image.load(assets_path)
+    background = pygame.transform.scale(background, (const.SCREEN_WIDTH,const.SCREEN_HEIGHT))
+    screen.blit(background, (0,0))
+    font_title = pygame.font.Font(None, 80)
+    
+    # control
+    title = font_title.render('SOKOBAN', True, const.TEXT_COLOR)
+    
+    # draw
+    text_rect = title.get_rect()
+    text_rect.center = (const.SCREEN_WIDTH//2, 80)
+    screen.blit(title, text_rect)
 
 # LOGIN: 0: none, 1: quit, 2: success
 def login(screen):
     active = None
-    hover = None
-    username = "phong"
-    password = "123"
+    username = ""
     while True:
-        screen.fill('white')
-        # control
+        assets_path = os.getcwd() + "\\..\\Assets\\init_background.png"
+        background = pygame.image.load(assets_path)
+        background = pygame.transform.scale(background, (const.SCREEN_WIDTH,const.SCREEN_HEIGHT))
+        screen.blit(background, (0,0))
+        # title
         font_title = pygame.font.Font(None, 80)
-        font_text = pygame.font.Font(None, 40)
         title = font_title.render("LOGIN", True, const.TEXT_COLOR)
-        label_username = font_text.render("Enter username", True, const.TEXT_COLOR)
-        label_password = font_text.render("Enter password", True, const.TEXT_COLOR)
-        textbox_username = pygame.Rect(140,150,320,40)
-        textbox_password = pygame.Rect(140,230,320,40)
-        button_login = pygame.Rect(140, 280, 150, 40)
-        button_exit = pygame.Rect(310, 280, 150, 40)
-        text_login = font_text.render("Login", True, const.TEXT_COLOR)
-        text_exit = font_text.render("Exit", True, const.TEXT_COLOR)
+        text_rect = title.get_rect()
+        text_rect.center = (300, 60)
+        screen.blit(title, text_rect)
         
+        # label
+        font_text = pygame.font.Font(None, 40)
+        label_username = font_text.render("Enter username", True, const.TEXT_COLOR)
+        screen.blit(label_username, (140, 120))
+        
+        # textbox
+        textbox_username = pygame.Rect(140,150,320,40)
+        pygame.draw.rect(screen, const.TEXTBOX_COLOR, textbox_username, 2)
+        
+        # button
+        button_login = pygame.image.load(const.asset_button_path + "\\login.png")
+        button_quit = pygame.image.load(const.asset_button_path + "\\login_quit.png")
+        
+        screen.blit(button_login, (160,200))
+        screen.blit(button_quit, (330,200))
+        
+        button_login_rect = button_login.get_rect(topleft=(160,200))
+        button_quit_rect = button_quit.get_rect(topleft=(330,200))
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -54,162 +81,77 @@ def login(screen):
             if event.type == MOUSEBUTTONDOWN:
                 if textbox_username.collidepoint(event.pos):
                     active = textbox_username
-                elif textbox_password.collidepoint(event.pos):
-                    active = textbox_password
-                elif button_login.collidepoint(event.pos):
-                    active = button_login
-                elif button_exit.collidepoint(event.pos):
-                    active = button_exit
+                elif button_login_rect.collidepoint(event.pos):
+                    return check_login(username)
+                elif button_quit_rect.collidepoint(event.pos):
+                    return 1
                 else:
                     active = None
-            if event.type == MOUSEMOTION:
-                if button_exit.collidepoint(event.pos):
-                    hover = button_exit
-                elif button_login.collidepoint(event.pos):
-                    hover = button_login
-                else:
-                    hover = None
             if event.type == pygame.KEYDOWN:
                 if active is not None:
                     if event.key == pygame.K_RETURN:
-                        return check_login(username, password)
+                        return check_login(username)
                     elif event.key == pygame.K_BACKSPACE:
                         if active == textbox_username:
                             username = username[:-1]
-                        elif active == textbox_password:
-                            password = password[:-1]
                     else:
                         if active == textbox_username:
                             username += event.unicode
-                        elif active == textbox_password:
-                            password += event.unicode
 
-        # draw
-        text_rect = title.get_rect()
-        text_rect.center = (300, 60)
-        screen.blit(title, text_rect)
-        
-        screen.blit(label_username, (140, 120))
-        pygame.draw.rect(screen, const.TEXTBOX_COLOR, textbox_username, 2)
-        
-        screen.blit(label_password, (140, 200))
-        pygame.draw.rect(screen, const.TEXTBOX_COLOR, textbox_password, 2)
-        
         if active == textbox_username:
             pygame.draw.rect(screen, const.TEXTBOX_COLOR_ACTIVE, textbox_username, 2)
-        elif active == textbox_password:
-            pygame.draw.rect(screen, const.TEXTBOX_COLOR_ACTIVE, textbox_password, 2)
-        elif active == button_login:
-            return check_login(username, password)
-        elif active == button_exit:
-            return 1
         
-        if hover == button_exit:
-            pygame.draw.rect(screen, const.BUTTON_LOGIN_COLOR, button_login)
-            pygame.draw.rect(screen, const.BUTTON_EXIT_COLOR_HOVER, button_exit)
-        elif hover == button_login:
-            pygame.draw.rect(screen, const.BUTTON_LOGIN_COLOR_HOVER, button_login)
-            pygame.draw.rect(screen, const.BUTTON_EXIT_COLOR, button_exit)  
-        else:      
-            pygame.draw.rect(screen, const.BUTTON_LOGIN_COLOR, button_login)
-            pygame.draw.rect(screen, const.BUTTON_EXIT_COLOR, button_exit)     
-            
-        text_rect = text_exit.get_rect()
-        text_rect.center = button_exit.center
-        screen.blit(text_exit, text_rect)
-
-        text_rect = text_login.get_rect()
-        text_rect.center = button_login.center
-        screen.blit(text_login, text_rect)    
-        
-        user_text = font_text.render(username, True, 'black')
-        pass_text = font_text.render(password, True, 'black')
+        user_text = font_text.render(username, True, 'white')
         
         screen.blit(user_text, (textbox_username.x + 5, textbox_username.y + 5))
-        screen.blit(pass_text, (textbox_password.x + 5, textbox_password.y + 5))  
         # update
         pygame.display.update()
 
-def check_login(user, password):
-    if user == "phong" and password == "123":
-        return 2
-    else:
-        return 0
+def check_login(user):
+    list_user = []
+    with open(const.asset_button_path+"\\user.txt", 'r') as file:
+        list_user = file.readlines()
+    
+    for i in list_user:
+        if user == i:
+            return user
+    
+    list_user.append(user+"\n")
+    
+    with open(const.asset_button_path+"\\user.txt", 'w') as file:
+        file.writelines(list_user)
+        return user
+    
     
 # GAME
-def game(screen):
-    hover = active = None
+def game(screen, user):
     while True:
-        screen.fill('white')
-        font_title = pygame.font.Font(None, 80)
-        font_text = pygame.font.Font(None, 40)
+        draw_background(screen)
         
-        # control
-        title = font_title.render('SOKOBAN', True, const.TEXT_COLOR)
-        
-        list_text = ["PLAY", "SCORE", "OPTION", "QUIT"]
-        list_text_control = []
+        image_name = ["\\play.png","\\score.png","\\option.png","\\quit.png"]
+        image = []
+        image_rect = []
+        image_location = []
         for i in range(4):
-            text = font_text.render(list_text[i], True, const.TEXT_COLOR)
-            list_text_control.append(text)
-        
-        list_button_control = []
-        for i in range(4):
-            button = pygame.Rect(const.BUTTON_BASE_X, const.BUTTON_BASE_Y + i*(const.BUTTON_HEIGHT + 10), const.BUTTON_WIDTH, const.BUTTON_HEIGHT)
-            list_button_control.append(button)
-        
-        # draw
-        text_rect = title.get_rect()
-        text_rect.center = (const.SCREEN_WIDTH//2, 80)
-        screen.blit(title, text_rect)
-        
-        for i in range(4):
-            pygame.draw.rect(screen, const.BUTTON_COLOR, list_button_control[i])
-        
-        if hover == list_button_control[0]:
-            pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[0])
-        elif hover == list_button_control[1]:
-            pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[1])
-        elif hover == list_button_control[2]:
-            pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[2])
-        elif hover == list_button_control[3]:
-            pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[3])
-        
-        for i in range(4):
-            text = list_text_control[i]
-            text_rect = text.get_rect()
-            text_rect.center = list_button_control[i].center
-            screen.blit(text, text_rect)
-        
+            image.append(pygame.image.load(const.asset_button_path + image_name[i]))
+            image_location.append((const.BUTTON_BASE_X, const.BUTTON_BASE_Y + i*(const.BUTTON_HEIGHT + 10)))
+            image_rect.append(image[i].get_rect(topleft=image_location[i]))
+            screen.blit(image[i], image_location[i])
+            
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
-            if event.type == MOUSEMOTION:
-                if list_button_control[0].collidepoint(event.pos):
-                    hover = list_button_control[0]
-                elif list_button_control[1].collidepoint(event.pos):
-                    hover = list_button_control[1]
-                elif list_button_control[2].collidepoint(event.pos):
-                    hover = list_button_control[2]
-                elif list_button_control[3].collidepoint(event.pos):
-                    hover = list_button_control[3]
-                else:
-                    hover = None
             if event.type == MOUSEBUTTONDOWN:
-                active = hover
+                if image_rect[0].collidepoint(event.pos):
+                    play(screen)
+                elif image_rect[1].collidepoint(event.pos):
+                    score(screen)
+                elif image_rect[2].collidepoint(event.pos):
+                    option(screen)
+                elif image_rect[3].collidepoint(event.pos):
+                    quit()
                 
-        if active == list_button_control[0]:
-            play(screen)
-            active = None
-        elif active == list_button_control[1]:
-            score(screen)
-            active = None
-        elif active == list_button_control[2]:
-            option(screen)
-            active = None
-        elif active == list_button_control[3]:
-            quit()
             
         pygame.display.update()
 
@@ -218,79 +160,33 @@ def quit():
     sys.exit()
     
 def play(screen):
-    hover = active = None
     running = True
     while running:
-        screen.fill('white')
-        font_title = pygame.font.Font(None, 80)
-        font_text = pygame.font.Font(None, 40)
+        draw_background(screen)
         
-        # control
-        title = font_title.render('SOKOBAN', True, const.TEXT_COLOR)
-        
-        list_text = ["1 PLAYER", "2 PLAYER", "MACHINE", "BACK"]
-        list_text_control = []
+        image_name = ["\\1_player.png","\\2_player.png","\\machine.png","\\back.png"]
+        image = []
+        image_rect = []
+        image_location = []
         for i in range(4):
-            text = font_text.render(list_text[i], True, const.TEXT_COLOR)
-            list_text_control.append(text)
-        
-        list_button_control = []
-        for i in range(4):
-            button = pygame.Rect(const.BUTTON_BASE_X, const.BUTTON_BASE_Y + i*(const.BUTTON_HEIGHT + 10), const.BUTTON_WIDTH, const.BUTTON_HEIGHT)
-            list_button_control.append(button)
-        
-        # draw
-        text_rect = title.get_rect()
-        text_rect.center = (const.SCREEN_WIDTH//2, 80)
-        screen.blit(title, text_rect)
-        
-        for i in range(4):
-            pygame.draw.rect(screen, const.BUTTON_COLOR, list_button_control[i])
-        
-        if hover == list_button_control[0]:
-            pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[0])
-        elif hover == list_button_control[1]:
-            pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[1])
-        elif hover == list_button_control[2]:
-            pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[2])
-        elif hover == list_button_control[3]:
-            pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[3])
-        
-        for i in range(4):
-            text = list_text_control[i]
-            text_rect = text.get_rect()
-            text_rect.center = list_button_control[i].center
-            screen.blit(text, text_rect)
+            image.append(pygame.image.load(const.asset_button_path + image_name[i]))
+            image_location.append((const.BUTTON_BASE_X, const.BUTTON_BASE_Y + i*(const.BUTTON_HEIGHT + 10)))
+            image_rect.append(image[i].get_rect(topleft=image_location[i]))
+            screen.blit(image[i], image_location[i])
         
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
-            if event.type == MOUSEMOTION:
-                if list_button_control[0].collidepoint(event.pos):
-                    hover = list_button_control[0]
-                elif list_button_control[1].collidepoint(event.pos):
-                    hover = list_button_control[1]
-                elif list_button_control[2].collidepoint(event.pos):
-                    hover = list_button_control[2]
-                elif list_button_control[3].collidepoint(event.pos):
-                    hover = list_button_control[3]
-                else:
-                    hover = None
             if event.type == MOUSEBUTTONDOWN:
-                active = hover
-                
-        if active == list_button_control[0]:
-            player_1(screen)
-            active=None
-        elif active == list_button_control[1]:
-            player_2(screen)
-            active=None
-        elif active == list_button_control[2]:
-            machine(screen)
-            active=None
-        elif active == list_button_control[3]:
-            running = False
+                if image_rect[0].collidepoint(event.pos):
+                    player_1(screen)
+                elif image_rect[1].collidepoint(event.pos):
+                    player_2(screen)
+                elif image_rect[2].collidepoint(event.pos):
+                    machine(screen)
+                elif image_rect[3].collidepoint(event.pos):
+                    running=False
             
         pygame.display.update()
     
@@ -301,166 +197,104 @@ def option(screen):
     print('option')
     
 def player_1(screen):
-    hover = active = None
     running = True
     while running:
-        list_text = ["EASY", "MEDIUM", "HARD", "BACK"]
-        list_button_control = []
-        draw1(screen, list_text, list_button_control, hover, active)
+        draw_background(screen)
         
+        image_name = ["\\easy.png","\\medium.png","\\hard.png","\\back.png"]
+        image = []
+        image_rect = []
+        image_location = []
+        for i in range(4):
+            image.append(pygame.image.load(const.asset_button_path + image_name[i]))
+            image_location.append((const.BUTTON_BASE_X, const.BUTTON_BASE_Y + i*(const.BUTTON_HEIGHT + 10)))
+            image_rect.append(image[i].get_rect(topleft=image_location[i]))
+            screen.blit(image[i], image_location[i])
+            
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
-            if event.type == MOUSEMOTION:
-                if list_button_control[0].collidepoint(event.pos):
-                    hover = list_button_control[0]
-                elif list_button_control[1].collidepoint(event.pos):
-                    hover = list_button_control[1]
-                elif list_button_control[2].collidepoint(event.pos):
-                    hover = list_button_control[2]
-                elif list_button_control[3].collidepoint(event.pos):
-                    hover = list_button_control[3]
-                else:
-                    hover = None
             if event.type == MOUSEBUTTONDOWN:
-                active = hover
-        
-        if active == list_button_control[0]:
-            easy(screen)
-            active = None
-        elif active == list_button_control[1]:
-            medium(screen)
-            active = None
-        elif active == list_button_control[2]:
-            hard(screen)
-            active = None
-        elif active == list_button_control[3]:
-            running = False
-        
+                if image_rect[0].collidepoint(event.pos):
+                    easy(screen)
+                elif image_rect[1].collidepoint(event.pos):
+                    medium(screen)
+                elif image_rect[2].collidepoint(event.pos):
+                    hard(screen)
+                elif image_rect[3].collidepoint(event.pos):
+                    running=False
+            
         pygame.display.update()
     
 def player_2(screen):
-    hover = active = None
     running = True
     while running:
-        list_text = ["EASY", "MEDIUM", "HARD", "BACK"]
-        list_button_control = []
-        draw1(screen, list_text, list_button_control, hover, active)
+        draw_background(screen)
         
+        image_name = ["\\easy.png","\\medium.png","\\hard.png","\\back.png"]
+        image = []
+        image_rect = []
+        image_location = []
+        for i in range(4):
+            image.append(pygame.image.load(const.asset_button_path + image_name[i]))
+            image_location.append((const.BUTTON_BASE_X, const.BUTTON_BASE_Y + i*(const.BUTTON_HEIGHT + 10)))
+            image_rect.append(image[i].get_rect(topleft=image_location[i]))
+            screen.blit(image[i], image_location[i])
+            
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
-            if event.type == MOUSEMOTION:
-                if list_button_control[0].collidepoint(event.pos):
-                    hover = list_button_control[0]
-                elif list_button_control[1].collidepoint(event.pos):
-                    hover = list_button_control[1]
-                elif list_button_control[2].collidepoint(event.pos):
-                    hover = list_button_control[2]
-                elif list_button_control[3].collidepoint(event.pos):
-                    hover = list_button_control[3]
-                else:
-                    hover = None
             if event.type == MOUSEBUTTONDOWN:
-                active = hover
-        
-        if active == list_button_control[0]:
-            easy(screen)
-            active = None
-        elif active == list_button_control[1]:
-            medium(screen)
-            active = None
-        elif active == list_button_control[2]:
-            hard(screen)
-            active = None
-        elif active == list_button_control[3]:
-            running = False
-        
+                if image_rect[0].collidepoint(event.pos):
+                    easy(screen)
+                elif image_rect[1].collidepoint(event.pos):
+                    medium(screen)
+                elif image_rect[2].collidepoint(event.pos):
+                    hard(screen)
+                elif image_rect[3].collidepoint(event.pos):
+                    running=False
+            
         pygame.display.update()
     
 def machine(screen):
-    hover = active = None
     running = True
     while running:
-        list_text = ["EASY", "MEDIUM", "HARD", "BACK"]
-        list_button_control = []
-        draw1(screen, list_text, list_button_control, hover, active)
+        draw_background(screen)
         
+        image_name = ["\\easy.png","\\medium.png","\\hard.png","\\back.png"]
+        image = []
+        image_rect = []
+        image_location = []
+        for i in range(4):
+            image.append(pygame.image.load(const.asset_button_path + image_name[i]))
+            image_location.append((const.BUTTON_BASE_X, const.BUTTON_BASE_Y + i*(const.BUTTON_HEIGHT + 10)))
+            image_rect.append(image[i].get_rect(topleft=image_location[i]))
+            screen.blit(image[i], image_location[i])
+            
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
-            if event.type == MOUSEMOTION:
-                if list_button_control[0].collidepoint(event.pos):
-                    hover = list_button_control[0]
-                elif list_button_control[1].collidepoint(event.pos):
-                    hover = list_button_control[1]
-                elif list_button_control[2].collidepoint(event.pos):
-                    hover = list_button_control[2]
-                elif list_button_control[3].collidepoint(event.pos):
-                    hover = list_button_control[3]
-                else:
-                    hover = None
             if event.type == MOUSEBUTTONDOWN:
-                active = hover
-        
-        if active == list_button_control[0]:
-            easy(screen)
-            active = None
-        elif active == list_button_control[1]:
-            medium(screen)
-            active = None
-        elif active == list_button_control[2]:
-            hard(screen)
-            active = None
-        elif active == list_button_control[3]:
-            running = False
-        
+                if image_rect[0].collidepoint(event.pos):
+                    easy(screen)
+                elif image_rect[1].collidepoint(event.pos):
+                    medium(screen)
+                elif image_rect[2].collidepoint(event.pos):
+                    hard(screen)
+                elif image_rect[3].collidepoint(event.pos):
+                    running=False
+            
         pygame.display.update()
 
-def draw1(screen, list_text, list_button_control, hover, active):
-    screen.fill('white')
-    font_title = pygame.font.Font(None, 80)
-    font_text = pygame.font.Font(None, 40)
-    # control
-    title = font_title.render('SOKOBAN', True, const.TEXT_COLOR)
-    list_text_control = []
-    for i in range(4):
-        text = font_text.render(list_text[i], True, const.TEXT_COLOR)
-        list_text_control.append(text)
-    for i in range(4):
-        button = pygame.Rect(const.BUTTON_BASE_X, const.BUTTON_BASE_Y + i*(const.BUTTON_HEIGHT + 10), const.BUTTON_WIDTH, const.BUTTON_HEIGHT)
-        list_button_control.append(button)
-    # draw
-    text_rect = title.get_rect()
-    text_rect.center = (const.SCREEN_WIDTH//2, 80)
-    screen.blit(title, text_rect)
-    for i in range(4):
-        pygame.draw.rect(screen, const.BUTTON_COLOR, list_button_control[i])
-        
-    if hover == list_button_control[0]:
-        pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[0])
-    elif hover == list_button_control[1]:
-        pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[1])
-    elif hover == list_button_control[2]:
-        pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[2])
-    elif hover == list_button_control[3]:
-        pygame.draw.rect(screen, const.BUTTON_COLOR_HOVER, list_button_control[3])
-    
-    for i in range(4):
-        text = list_text_control[i]
-        text_rect = text.get_rect()
-        text_rect.center = list_button_control[i].center
-        screen.blit(text, text_rect)
-            
 def easy(screen):
     hover = active = None
     running = True
     while running:
         list_control = [] # text, button, centerX, centerY
-        running = draw2(screen, list_control, hover, active) 
+        running = draw_listmap(screen, list_control, hover, active) 
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -496,7 +330,7 @@ def medium(screen):
     running = True
     while running:
         list_control = [] # text, button, centerX, centerY
-        running = draw2(screen, list_control, hover, active) 
+        running = draw_listmap(screen, list_control, hover, active) 
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -530,7 +364,7 @@ def hard(screen):
     running = True
     while running:
         list_control = [] # text, button, centerX, centerY
-        running = draw2(screen, list_control, hover, active) 
+        running = draw_listmap(screen, list_control, hover, active) 
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -559,8 +393,11 @@ def hard(screen):
                 running = False
         pygame.display.update()
 
-def draw2(screen, list_control, hover, active):
-    screen.fill('white')
+def draw_listmap(screen, list_control, hover, active):
+    assets_path = os.getcwd() + "\\..\\Assets\\init_background.png"
+    background = pygame.image.load(assets_path)
+    background = pygame.transform.scale(background, (const.SCREEN_WIDTH,const.SCREEN_HEIGHT))
+    screen.blit(background, (0,0))
     font_text = pygame.font.Font(None, 40)
     font_text2 = pygame.font.Font(None, 30)
     

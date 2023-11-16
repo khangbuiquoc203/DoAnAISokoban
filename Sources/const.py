@@ -1,7 +1,8 @@
+import os
 # color
 TEXT_COLOR = 'red'
-TEXTBOX_COLOR = 'black'
-TEXTBOX_COLOR_ACTIVE = 'blue' # light blue
+TEXTBOX_COLOR = 'white'
+TEXTBOX_COLOR_ACTIVE = 'yellow' # light blue
 BUTTON_LOGIN_COLOR = (152, 251, 152) # green_pale
 BUTTON_LOGIN_COLOR_HOVER = (0, 128, 0)
 BUTTON_EXIT_COLOR = (255, 182, 193) # light pink
@@ -20,7 +21,7 @@ BUTTON_HEIGHT = 40
 BUTTON_MAP_SIZE = 90
 
 # location
-BUTTON_BASE_X = 230
+BUTTON_BASE_X = 250
 BUTTON_BASE_Y = 150
 
 BUTTON_MAP_X = 55
@@ -31,3 +32,5 @@ BUTTON_MAP_Y = 30
 MAP_EACH_LEVEL = 15
 
 USERNAME = 'phong'
+
+asset_button_path = os.getcwd() + "\\..\\Assets\\login"
