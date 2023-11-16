@@ -25,6 +25,7 @@ stage = 29
 //    GET SOME ASSETS     //
 //========================//
 '''
+backward_path = os.getcwd() + "\\..\\Backward"
 assets_path = os.getcwd() + "\\..\\Assets"
 os.chdir(assets_path)
 player = pygame.image.load(os.getcwd() + '\\playerleft.png')
@@ -205,6 +206,7 @@ def sokoban(stage):
     WHITE = (255, 255, 255)
     moved = False
     new_board = []
+    backward_matrix = []
     while running:     
         screen.blit(init_background, (0, 0))
         if moved == False:
@@ -234,26 +236,36 @@ def sokoban(stage):
             print('RESET')
             
         
-            
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
+                    moved = True
+                if event.key == pygame.K_SPACE:
+                    initGame(maps[stage])
+                    new_board = maps[stage]
+                    moved == False
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage]) 
                     sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
                     sound.play()
                     moved = True
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])
                     sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
                     sound.play()
                     moved = True
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])
                     player = pygame.image.load(assets_path + '\\playerleft.png')
                     sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
                     sound.play()
                     moved = True
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])
                     player = pygame.image.load(assets_path + '\\playerright.png')
                     sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
@@ -262,8 +274,8 @@ def sokoban(stage):
             if event.type == pygame.QUIT:
                 running = False
         pygame.display.update()
-        
-        
+        save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
+
 
         if spf.check_win(new_board, list_check_points[stage]):
             initGame(maps[stage+1])
@@ -275,7 +287,26 @@ def sokoban(stage):
             sound.play()
     pygame.quit()
 
-    
+
+'''
+//==================//
+//      BACKWARD    //
+//==================//
+'''
+def save_matrix_to_txt(matrix, file_path):   
+    with open(file_path, 'w') as file:
+        for row in matrix:
+            line = ', '.join(row)
+            file.write(line + '\n')
+
+def load_matrix_from_txt(file_path):
+    read_matrix = []
+
+    with open(file_path, 'r') as file:
+        for line in file:
+            row = line.strip().split(', ')
+            read_matrix.append(row) 
+    return read_matrix
 '''
 //==================//
 //      DISPLAY     //
