@@ -1,6 +1,41 @@
 import os
+
+# screen
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 760
+
+# title
+font_title_path = os.getcwd() + '\\..\\Assets\\font\\title_font.ttf'
+TITLE_BASE_X = SCREEN_WIDTH//2
+TITLE_BASE_Y = 140
+TITLE_COLOR = '#FDD250'
+TITLE_SIZE = 120
+
+# button
+button_path = os.getcwd() + '\\..\\Assets\\png\\button.png'
+hover_button_path = os.getcwd() + '\\..\\Assets\\png\\hover_button.png'
+BUTTON_BASE_X = SCREEN_WIDTH//2
+BUTTON_BASE_Y = 320
+
+# button_map
+map_path = os.getcwd() + '\\..\\Assets\\png\\map.png'
+map_locked_path = os.getcwd() + '\\..\\Assets\\png\\map_locked.png'
+BUTTON_MAP_SIZE = 120
+BUTTON_MAP_MARGIN = 25
+BUTTON_MAP_BASE_X = (SCREEN_WIDTH-BUTTON_MAP_SIZE*5-BUTTON_MAP_MARGIN*4)//2
+BUTTON_MAP_BASE_Y = 280
+MAP_COLOR='#FDE294'
+
+# icon
+icon_path = os.getcwd() + '\\..\\Assets\\icon\\back.png'
+
+# text
+font_text_path = os.getcwd() + '\\..\\Assets\\font\\text_font.otf'
+TEXT_COLOR = '#A4925F'
+TEXT_SIZE = 35
+
 # color
-TEXT_COLOR = 'red'
+
 TEXTBOX_COLOR = 'white'
 TEXTBOX_COLOR_ACTIVE = 'yellow' # light blue
 BUTTON_LOGIN_COLOR = (152, 251, 152) # green_pale
@@ -11,18 +46,10 @@ BUTTON_EXIT_COLOR_HOVER = (255, 105, 97) # pink darker
 BUTTON_COLOR = (192, 192, 192) # light gray
 BUTTON_COLOR_HOVER = (128, 128, 128) # gray
 
-# size
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 400
 
 BUTTON_WIDTH = 140
 BUTTON_HEIGHT = 40
 
-BUTTON_MAP_SIZE = 90
-
-# location
-BUTTON_BASE_X = 250
-BUTTON_BASE_Y = 150
 
 BUTTON_MAP_X = 55
 BUTTON_MAP_Y = 30
@@ -34,3 +61,4 @@ MAP_EACH_LEVEL = 15
 USERNAME = 'phong'
 
 asset_button_path = os.getcwd() + "\\..\\Assets\\login"
+assets_path = os.getcwd() + '\\..\\Assets\\'

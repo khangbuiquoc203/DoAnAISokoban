@@ -5,6 +5,8 @@ import re
 import button
 import support_func as spf
 import ctypes
+import const as c
+import sys
 '''
 //========================//
 //         PYGAME         //
@@ -194,21 +196,25 @@ algorithm = "BFS"
 //      SOKOBAN FUNCTION     //
 //===========================//
 '''
-def sokoban(stage):
+def sokoban(screen, stage):
     running = True 
     global algorithm
     global player
-    pygame.init()
     pygame.font.init()
-    screen = pygame.display.set_mode((1200, 760))
-    pygame.display.set_caption('Sokoban Game')
     BACKGROUND = (0, 0, 0) #BLACK
     WHITE = (255, 255, 255)
     moved = False
     new_board = []
     backward_matrix = []
+    # back button
+    back = pygame.image.load(c.icon_path)
+    back_rect = back.get_rect(topleft=(10,c.SCREEN_HEIGHT-back.get_height()))
     while running:     
         screen.blit(init_background, (0, 0))
+        
+        # back button
+        screen.blit(back, back_rect)
+        
         if moved == False:
             initGame(maps[stage])
             new_board = maps[stage]
@@ -237,6 +243,9 @@ def sokoban(stage):
             
         
         for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if back_rect.collidepoint(event.pos):
+                    running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
@@ -272,7 +281,8 @@ def sokoban(stage):
                     sound.play()
                     moved = True
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+                sys.exit()
         pygame.display.update()
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
 
@@ -285,7 +295,7 @@ def sokoban(stage):
             moved == False
             sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
             sound.play()
-    pygame.quit()
+    #pygame.quit()
 
 
 '''
