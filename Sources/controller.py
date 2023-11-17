@@ -203,10 +203,13 @@ def game(screen, user):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
                 if hover == 0:
                     play(screen)
+                    hover = -1
                 elif hover == 1:
                     print('score')
+                    hover = -1
                 elif hover == 2:
                     print('option')
+                    hover = -1
                 elif hover == 3:
                     quit()
                
@@ -246,10 +249,13 @@ def play(screen):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
                 if hover == 0:
                     player_1(screen)
+                    hover = -1
                 elif hover == 1:
                     player_2(screen)
+                    hover = -1
                 elif hover == 2:
                     AI(screen)
+                    hover = -1
                 elif hover == 3:
                     running = False
         
@@ -299,10 +305,13 @@ def player_1(screen):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
                 if hover == 0:
                     map(screen, level=0)
+                    hover = -1
                 elif hover == 1:
                     map(screen, level=1)
+                    hover = -1
                 elif hover == 2:
                     map(screen, level=2)
+                    hover = -1
                 elif hover == 3:
                     running = False
         
@@ -342,10 +351,13 @@ def player_2(screen):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
                 if hover == 0:
                     map(screen, level=0)
+                    hover = -1
                 elif hover == 1:
                     map(screen, level=1)
+                    hover = -1
                 elif hover == 2:
                     map(screen, level=2)
+                    hover = -1
                 elif hover == 3:
                     running = False
         
@@ -385,10 +397,13 @@ def AI(screen):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
                 if hover == 0:
                     map(screen, level=0)
+                    hover = -1
                 elif hover == 1:
                     map(screen, level=1)
+                    hover = -1
                 elif hover == 2:
                     map(screen, level=2)
+                    hover = -1
                 elif hover == 3:
                     running = False
         
@@ -432,10 +447,11 @@ def map(screen, level):
                     hover = -1
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
-                if back_rect.collidepoint(event.pos):
-                    running = False
                 if hover != -1:
                     sokoban(screen, buttons[hover][4])
+                    hover = -1 # đặt lại hover mỗi lần load map
+                if back_rect.collidepoint(event.pos):
+                    running = False
         
         
         
