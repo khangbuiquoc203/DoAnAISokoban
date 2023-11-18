@@ -21,6 +21,8 @@ def init():
         if check == 1:
             pygame.quit()
             sys.exit()
+        elif check == 0:
+            continue
         else:
             print("success!\nHello",check)
             game(screen, check)
@@ -106,24 +108,29 @@ def login(screen):
         draw_background(screen)
         draw_title(screen, 'LOGIN')
         
-        # label
-        font_text = pygame.font.Font(None, 40)
-        label_username = font_text.render("Enter username", True, c.TEXT_COLOR)
-        screen.blit(label_username, (140, 120))
+        # text
+        font = pygame.font.Font(c.font_text_path, c.TEXT_SIZE)
+        text = font.render('Enter username:', True, 'white')
+        text_rect = text.get_rect(center=(c.SCREEN_WIDTH//2,300))
+        screen.blit(text, text_rect)
+        
         
         # textbox
-        textbox_username = pygame.Rect(140,150,320,40)
+        textbox_username = pygame.Rect(text_rect.left,text_rect.top+50,text.get_width(),text.get_height()+10)
         pygame.draw.rect(screen, c.TEXTBOX_COLOR, textbox_username, 2)
         
         # button
-        button_login = pygame.image.load(c.asset_button_path + "\\login.png")
-        button_quit = pygame.image.load(c.asset_button_path + "\\login_quit.png")
+        button_login = pygame.image.load(c.button_path)
+        button_login = pygame.transform.scale(button_login, (button_login.get_width()*1.2, button_login.get_height()))
+        button_login_rect = button_login.get_rect(center=text_rect.center)
+        button_login_rect.top += 140
         
-        screen.blit(button_login, (160,200))
-        screen.blit(button_quit, (330,200))
+        screen.blit(button_login, button_login_rect)
         
-        button_login_rect = button_login.get_rect(topleft=(160,200))
-        button_quit_rect = button_quit.get_rect(topleft=(330,200))
+        login_text = font.render('OK', True, c.TEXT_COLOR)
+        login_text_rect = login_text.get_rect(center=button_login_rect.center)
+        screen.blit(login_text, login_text_rect)
+        
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -133,8 +140,6 @@ def login(screen):
                     active = textbox_username
                 elif button_login_rect.collidepoint(event.pos):
                     return check_login(username)
-                elif button_quit_rect.collidepoint(event.pos):
-                    return 1
                 else:
                     active = None
             if event.type == pygame.KEYDOWN:
@@ -151,13 +156,15 @@ def login(screen):
         if active == textbox_username:
             pygame.draw.rect(screen, c.TEXTBOX_COLOR_ACTIVE, textbox_username, 2)
         
-        user_text = font_text.render(username, True, 'white')
+        user_text = font.render(username, True, 'white')
         
         screen.blit(user_text, (textbox_username.x + 5, textbox_username.y + 5))
         # update
         pygame.display.update()
 
 def check_login(user):
+    if user == '':
+        return 0
     list_user = []
     with open(c.asset_button_path+"\\user.txt", 'r') as file:
         list_user = file.readlines()
