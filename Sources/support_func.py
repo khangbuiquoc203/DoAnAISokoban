@@ -1,3 +1,36 @@
+from copy import deepcopy
+TIME_OUT = 2000
+class state:
+    def __init__(self, board, state_parent, list_check_point):
+        '''storage current board and state parent of this state'''
+        self.board = board
+        self.state_parent = state_parent
+        self.cost = 1
+        self.heuristic = 0
+        self.check_points = deepcopy(list_check_point)
+    ''' RECURSIVE FUNCTION TO BACKTRACK TO THE FIRST FIRST IF THE CURRENT STATE IS GOAL '''
+    def get_line(self):
+        '''use loop to find list board from start to this state'''
+        if self.state_parent is None:
+            return [self.board]
+        return (self.state_parent).get_line() + [self.board]
+    ''' COMPUTE HEURISTIC FUNCTION USED FOR A* ALGORITHM '''
+    def compute_heuristic(self):
+        list_boxes = find_boxes_position(self.board)
+        if self.heuristic == 0:
+            self.heuristic = self.cost + abs(sum(list_boxes[i][0] + list_boxes[i][1] - self.check_points[i][0] - self.check_points[i][1] for i in range(len(list_boxes))))
+        return self.heuristic
+    ''' OPERATORS OVERLOADING THAT ALLOW STATES TO BE STORED IN PRIORITY QUEUE '''
+    def __gt__(self, other):
+        if self.compute_heuristic() > other.compute_heuristic():
+            return True
+        else:
+            return False
+    def __lt__(self, other):
+        if self.compute_heuristic() < other.compute_heuristic():
+            return True
+        else :
+            return False
 ''' ASSIGN THE MATRIX '''
 def assign_matrix(board):
     '''return board as same as input board'''
@@ -33,7 +66,13 @@ def check_win(board, list_check_point):
             return False
     return True
 
-
+''' CHECK WHETHER THE BOARD ALREADY EXISTED IN THE TRAVERSED LIST'''
+def is_board_exist(board, list_state):
+    '''return true if has same board in list'''
+    for state in list_state:
+        if compare_matrix(state.board, board):
+            return True
+    return False
 
 ''' CHECK WHETHER A SINGLE BOX IS ON A CHECKPOINT '''
 def is_box_on_check_point(box, list_check_point):
@@ -42,7 +81,15 @@ def is_box_on_check_point(box, list_check_point):
             return True
     return False
 
-
+''' CHECK WHETHER AT LEAST ONE BOX IS STUCK IN THE CORNER'''
+def is_board_can_not_win(board, list_check_point):
+    '''return true if box in corner of wall -> can't win'''
+    for x in range(len(board)):
+        for y in range(len(board[0])):
+            if board[x][y] == '$':
+                if check_in_corner(board, x, y, list_check_point):
+                    return True
+    return False
 ''' CHECK WHETHER A SIGNLE BOX IS STUCK IN THE CORNER '''
 def check_in_corner(board, x, y, list_check_point):
     '''return true if board[x][y] in corner'''
@@ -236,3 +283,18 @@ def move_in_1_direction(board, direct, list_check_point):
                 new_board[p[0]][p[1]] = '%'
         return new_board 
     return board
+
+
+def check_movement_direction(previous_position, current_position):
+    prev_row, prev_col = previous_position
+    curr_row, curr_col = current_position
+    if curr_row < prev_row:
+        return 'w'
+    elif curr_row > prev_row:
+        return 's'
+    elif curr_col < prev_col:
+        return 'a'
+    elif curr_col > prev_col:
+        return 'd'
+    else:
+        return 'no_movement'

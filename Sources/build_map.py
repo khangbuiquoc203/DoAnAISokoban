@@ -7,6 +7,8 @@ import support_func as spf
 import ctypes
 import const as c
 import sys
+import bfs
+import keyboard
 '''
 //========================//
 //         PYGAME         //
@@ -20,8 +22,9 @@ pygame.display.set_caption('Sokoban Game')
 BACKGROUND = (0, 0, 0) #BLACK
 WHITE = (255, 255, 255)
 stage = 29
+clock = pygame.time.Clock()
 #text_font=pygame.font.Font("Arial",30)
-
+list_board = []
 '''
 //========================//
 //    GET SOME ASSETS     //
@@ -200,12 +203,16 @@ def sokoban(screen, stage):
     running = True 
     global algorithm
     global player
+    global list_board
     pygame.font.init()
     BACKGROUND = (0, 0, 0) #BLACK
     WHITE = (255, 255, 255)
     moved = False
     new_board = []
     backward_matrix = []
+    stateLenght = 0
+    AI_solving = False
+    currentState = 0
     # back button
     back = pygame.image.load(c.icon_path)
     back_rect = back.get_rect(topleft=(10,c.SCREEN_HEIGHT-back.get_height()))
@@ -239,10 +246,23 @@ def sokoban(screen, stage):
             else:
                 algorithm = "BFS"
         if start_button.draw(screen):
-            print('RESET')
+            move_step = []
+            check_points = get_check_points()
+            list_check_point = check_points[stage]
+            list_board = bfs.BFS_search(maps[stage], list_check_point)
+            stateLenght = len(list_board[0])
+            AI_solving= True
+            currentState = 0
             
+
         
         for event in pygame.event.get():
+            if len(list_board) > 0 and AI_solving == True:
+                clock.tick(2)
+                new_board = list_board[0][currentState]
+                currentState = currentState + 1
+                if currentState == stateLenght:
+                    AI_solving = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if back_rect.collidepoint(event.pos):
                     running = False
@@ -280,23 +300,30 @@ def sokoban(screen, stage):
                     sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
                     sound.play()
                     moved = True
+            
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
         pygame.display.update()
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
-
-
+        
+        
+    
         if spf.check_win(new_board, list_check_points[stage]):
-            initGame(maps[stage+1])
-            new_board = maps[stage+1]
-            stage+=1
+            #initGame(maps[stage+1])
+            #new_board = maps[stage+1]
+            #stage+=1
             #Mbox('', 'QUA MÀN', 0)
-            moved == False
+            #moved = False
             sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
             sound.play()
     #pygame.quit()
 
+
+def move_event(direct):
+    keyboard.press(direct)
+    pygame.time.wait(300)
+    keyboard.release(direct)
 
 '''
 //==================//
