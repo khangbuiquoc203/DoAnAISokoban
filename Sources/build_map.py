@@ -234,7 +234,7 @@ def sokoban(screen, stage):
         else:
             initGame(new_board)
         display(stage)
-        
+        draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
         if solve_button.draw(screen):
             move_step = []
             check_points = get_check_points()
@@ -341,7 +341,6 @@ def sokoban(screen, stage):
                 sys.exit()
         if spf.check_win(new_board, list_check_points[stage]):
             draw_text("Press enter to continue!", textsmall_font, (255, 255, 255), 150, 350)
-            draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
             if playsound == False:
                 sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
                 sound.play()
