@@ -25,6 +25,9 @@ stage = 29
 clock = pygame.time.Clock()
 #text_font=pygame.font.Font("Arial",30)
 list_board = []
+algorithm_number = 0
+algorithm_list = ["BFS", "DFS", "A Star", "UCS", "Greedy", "ID", "Hill Climbing", "Beam", "Dijkstra"]
+num_states_visited = 0
 '''
 //========================//
 //    GET SOME ASSETS     //
@@ -193,7 +196,7 @@ def renderMap(board):
                 screen.blit(player, (j * tile_size + map_offset_x, i * tile_size + map_offset_y))
 
 ''' VARIABLE '''
-algorithm = "BFS"
+algorithm = algorithm_list[0]
 ''' 
 //===========================//
 //      SOKOBAN FUNCTION     //
@@ -204,12 +207,15 @@ def sokoban(screen, stage):
     global algorithm
     global player
     global list_board
+    global algorithm_number
+    global num_states_visited
     pygame.font.init()
     BACKGROUND = (0, 0, 0) #BLACK
     WHITE = (255, 255, 255)
     moved = False
     new_board = []
     backward_matrix = []
+    playsound = False
     stateLenght = 0
     AI_solving = False
     currentState = 0
@@ -235,6 +241,20 @@ def sokoban(screen, stage):
             list_check_point = check_points[stage]
             if algorithm == "BFS":
                 list_board = algo.BFS_search(maps[stage], list_check_point)
+                num_states_visited = algo.number_states_visited()
+                print(num_states_visited)
+            if algorithm == "DFS":
+                list_board = algo.DFS_search(maps[stage], list_check_point)
+                num_states_visited = algo.number_states_visited()
+                print(num_states_visited)
+            if algorithm == "ID":
+                list_board = algo.ID_search(maps[stage], list_check_point)
+                num_states_visited = algo.number_states_visited()
+                print(num_states_visited)
+            if algorithm == "Dijkstra":
+                list_board = algo.Dijkstra_search(maps[stage], list_check_point)
+                num_states_visited = algo.number_states_visited()
+                print(num_states_visited)  
             stateLenght = len(list_board[0])
             AI_solving= True
             currentState = 0
@@ -243,16 +263,18 @@ def sokoban(screen, stage):
             print('RESET')
             initGame(maps[stage])
             new_board = maps[stage]
+            playsound = False
             moved == False
         if player_button.draw(screen):
             print('RESET')
         if level_button.draw(screen):
             print('RESET')
         if algos_button.draw(screen):
-            if algorithm == "BFS":
-                algorithm = "A Star"
-            else:
-                algorithm = "BFS"
+            algorithm_number +=1
+            if algorithm_number == (len(algorithm_list)):
+                algorithm_number = 0
+            algorithm = algorithm_list[algorithm_number]
+            
         if start_button.draw(screen):
             print('RESET')
             
@@ -280,6 +302,7 @@ def sokoban(screen, stage):
                 if event.key == pygame.K_SPACE:
                     initGame(maps[stage])
                     new_board = maps[stage]
+                    playsound = False
                     moved == False
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     backward_matrix = new_board
@@ -311,14 +334,18 @@ def sokoban(screen, stage):
                     initGame(maps[stage+1])
                     new_board = maps[stage+1]
                     stage+=1
+                    playsound = False
                     moved = False
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
         if spf.check_win(new_board, list_check_points[stage]):
-            draw_text("Press enter to continue!", textsmall_font, (255, 255, 255), 100, 60)
-            sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
-            sound.play()
+            draw_text("Press enter to continue!", textsmall_font, (255, 255, 255), 150, 350)
+            draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
+            if playsound == False:
+                sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
+                sound.play()
+                playsound = True
         pygame.display.update()
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         

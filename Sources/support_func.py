@@ -7,6 +7,7 @@ class state:
         self.state_parent = state_parent
         self.cost = 1
         self.heuristic = 0
+        self.depth = 0
         self.check_points = deepcopy(list_check_point)
     ''' RECURSIVE FUNCTION TO BACKTRACK TO THE FIRST FIRST IF THE CURRENT STATE IS GOAL '''
     def get_line(self):
