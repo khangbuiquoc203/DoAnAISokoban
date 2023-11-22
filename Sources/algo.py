@@ -1,6 +1,6 @@
 import support_func as spf
 import time
-
+import random
 '''
 //========================//
 //           BFS          //
@@ -41,6 +41,11 @@ def BFS_search(board, list_check_point):
 
         ''' GET LIST POSITION THAT PLAYER CAN MOVE TO '''
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
+        print(list_can_move)
+        num_shuffles = 23
+
+        for _ in range(num_shuffles):
+            random.shuffle(list_can_move)
         ''' MAKE NEW STATES FROM LIST CAN MOVE '''
         for next_pos in list_can_move:
             ''' MAKE NEW BOARD '''

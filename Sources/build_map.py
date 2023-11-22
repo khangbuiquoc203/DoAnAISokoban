@@ -7,7 +7,7 @@ import support_func as spf
 import ctypes
 import const as c
 import sys
-import bfs
+import algo
 import keyboard
 '''
 //========================//
@@ -230,7 +230,15 @@ def sokoban(screen, stage):
         display(stage)
         
         if solve_button.draw(screen):
-            print('SOLVE')
+            move_step = []
+            check_points = get_check_points()
+            list_check_point = check_points[stage]
+            if algorithm == "BFS":
+                list_board = algo.BFS_search(maps[stage], list_check_point)
+            stateLenght = len(list_board[0])
+            AI_solving= True
+            currentState = 0
+                
         if reset_button.draw(screen):
             print('RESET')
             initGame(maps[stage])
@@ -246,23 +254,22 @@ def sokoban(screen, stage):
             else:
                 algorithm = "BFS"
         if start_button.draw(screen):
-            move_step = []
-            check_points = get_check_points()
-            list_check_point = check_points[stage]
-            list_board = bfs.BFS_search(maps[stage], list_check_point)
-            stateLenght = len(list_board[0])
-            AI_solving= True
-            currentState = 0
+            print('RESET')
             
-
+            
+            
+        if len(list_board) > 0 and AI_solving == True:
+            clock.tick(3)
+            new_board = list_board[0][currentState]
+            sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
+            sound.play()
+            currentState = currentState + 1
+            moved = True
+            if currentState == stateLenght:
+                AI_solving = False
         
         for event in pygame.event.get():
-            if len(list_board) > 0 and AI_solving == True:
-                clock.tick(2)
-                new_board = list_board[0][currentState]
-                currentState = currentState + 1
-                if currentState == stateLenght:
-                    AI_solving = False
+            
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if back_rect.collidepoint(event.pos):
                     running = False
@@ -300,23 +307,26 @@ def sokoban(screen, stage):
                     sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
                     sound.play()
                     moved = True
-            
+                if event.key == pygame.K_RETURN and spf.check_win(new_board, list_check_points[stage]):
+                    initGame(maps[stage+1])
+                    new_board = maps[stage+1]
+                    stage+=1
+                    moved = False
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+        if spf.check_win(new_board, list_check_points[stage]):
+            draw_text("Press enter to continue!", textsmall_font, (255, 255, 255), 100, 60)
+            sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
+            sound.play()
         pygame.display.update()
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
         
     
-        if spf.check_win(new_board, list_check_points[stage]):
-            #initGame(maps[stage+1])
-            #new_board = maps[stage+1]
-            #stage+=1
-            #Mbox('', 'QUA MÀN', 0)
-            #moved = False
-            sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
-            sound.play()
+        
+            
+            
     #pygame.quit()
 
 
@@ -364,6 +374,7 @@ def display(stage):
     draw_text("Sokoban Game", text_font, (255, 255, 255), 800, 80)
     draw_text("Score: ", textsmall_font, (255, 255, 255), 100, 15)
     draw_text("Time: ", textsmall_font, (255, 255, 255), 400, 15)
+    
 
     mapText = textsmall_font.render("Lv. " + str(stage+1), True, WHITE)
     mapRect = mapText.get_rect(center=(955, 280))
