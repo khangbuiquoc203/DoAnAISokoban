@@ -7,6 +7,8 @@ import support_func as spf
 import ctypes
 import const as c
 import sys
+import Algorithms as agr
+import keyboard
 '''
 //========================//
 //         PYGAME         //
@@ -19,9 +21,8 @@ screen = pygame.display.set_mode((1200, 760))
 pygame.display.set_caption('Sokoban Game')
 BACKGROUND = (0, 0, 0) #BLACK
 WHITE = (255, 255, 255)
-stage = 29
 #text_font=pygame.font.Font("Arial",30)
-
+list_board = []
 '''
 //========================//
 //    GET SOME ASSETS     //
@@ -200,12 +201,15 @@ def sokoban(screen, stage):
     running = True 
     global algorithm
     global player
+    global list_board
     pygame.font.init()
-    BACKGROUND = (0, 0, 0) #BLACK
-    WHITE = (255, 255, 255)
+    clock = pygame.time.Clock()
     moved = False
     new_board = []
     backward_matrix = []
+    stateLenght = 0
+    AI_solving = False
+    currentState = 0
     # back button
     back = pygame.image.load(c.icon_path)
     back_rect = back.get_rect(topleft=(10,c.SCREEN_HEIGHT-back.get_height()))
@@ -224,18 +228,40 @@ def sokoban(screen, stage):
         
         if solve_button.draw(screen):
             print('SOLVE')
+            if algorithm == "BFS": 
+                list_board = agr.ASTAR(maps[stage], list_check_points[stage])
+                print(list_board[1])
+            if algorithm == "ASTAR":
+                list_board = agr.ASTAR(maps[stage], list_check_points[stage])
+            if algorithm == "GREEDY":
+                list_board = agr.GREEDY(maps[stage], list_check_points[stage])
+            if algorithm == "UCS":
+                list_board = agr.UCS(maps[stage], list_check_points[stage])
+                    
+            stateLenght = len(list_board[0])
+            AI_solving= True
+            currentState = 0
+     
+        if len(list_board) > 0 and AI_solving == True:
+            clock.tick(3)
+            new_board = list_board[0][currentState]
+            currentState = currentState + 1
+            moved = True
+            if currentState == stateLenght:
+                AI_solving = False   
+         
         if reset_button.draw(screen):
             print('RESET')
             initGame(maps[stage])
             new_board = maps[stage]
-            moved == False
+            moved = False
         if player_button.draw(screen):
             print('RESET')
         if level_button.draw(screen):
             print('RESET')
         if algos_button.draw(screen):
             if algorithm == "BFS":
-                algorithm = "A Star"
+                algorithm = "ASTAR"
             else:
                 algorithm = "BFS"
         if start_button.draw(screen):
@@ -288,6 +314,7 @@ def sokoban(screen, stage):
 
 
         if spf.check_win(new_board, list_check_points[stage]):
+            clock.tick(3)
             initGame(maps[stage+1])
             new_board = maps[stage+1]
             stage+=1
@@ -295,7 +322,11 @@ def sokoban(screen, stage):
             moved == False
             sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
             sound.play()
-    #pygame.quit()
+
+def move_event(direct):
+    keyboard.press(direct)
+    pygame.time.wait(300)
+    keyboard.release(direct)
 
 
 '''
