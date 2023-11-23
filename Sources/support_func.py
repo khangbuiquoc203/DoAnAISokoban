@@ -1,71 +1,109 @@
 from copy import deepcopy
-TIME_OUT = 2000
+import numpy as np
+
+TIME_OUT = 1800
+'''
+//========================//
+//        SUPPORTING      //
+//        FUNCTIONS       //
+//========================//
+'''
+'''
+DATA CONTAINER TO STORE THE STATE FOR EACH STEP
+'''
 class state:
-    def __init__(self, board, state_parent, list_check_point):
-        '''storage current board and state parent of this state'''
+    def __init__(self, board, state_parent, cost, list_check_point, algorithm):
         self.board = board
         self.state_parent = state_parent
-        self.cost = 1
+        self.cost = cost
+        self.depth = cost
         self.heuristic = 0
-        self.depth = 0
+        self.algorithm = algorithm
         self.check_points = deepcopy(list_check_point)
-    ''' RECURSIVE FUNCTION TO BACKTRACK TO THE FIRST FIRST IF THE CURRENT STATE IS GOAL '''
-    def get_line(self):
-        '''use loop to find list board from start to this state'''
-        if self.state_parent is None:
-            return [self.board]
-        return (self.state_parent).get_line() + [self.board]
-    ''' COMPUTE HEURISTIC FUNCTION USED FOR A* ALGORITHM '''
-    def compute_heuristic(self):
+        
+    ''' FUNCTION TO BACKTRACK TO THE FIRST IF THE CURRENT STATE IS GOAL '''
+    def get_line(self):    
+        path = []
+        current_state = self
+        while current_state is not None:
+            path.append(current_state.board)
+            current_state = current_state.state_parent
+        path.reverse()
+        return path
+            
+            
+    
+    ''' COMPUTE HEURISTIC FUNCTION USED FOR GREEDY, A* ALGORITHM
+    def h(self):
         list_boxes = find_boxes_position(self.board)
         if self.heuristic == 0:
-            self.heuristic = self.cost + abs(sum(list_boxes[i][0] + list_boxes[i][1] - self.check_points[i][0] - self.check_points[i][1] for i in range(len(list_boxes))))
+            self.heuristic = abs(sum(list_boxes[i][0] + list_boxes[i][1] - self.check_points[i][0] - self.check_points[i][1] for i in range(len(list_boxes))))
         return self.heuristic
-    ''' OPERATORS OVERLOADING THAT ALLOW STATES TO BE STORED IN PRIORITY QUEUE '''
+    '''
+    
+    def h(self):
+        list_boxes = find_boxes_position(self.board) 
+        if self.heuristic == 0: # Convert the lists to numpy arrays 
+            array_boxes = np.array(list_boxes) 
+            array_check_points = np.array(self.check_points) # Calculate the absolute sum of the differences 
+            self.heuristic = np.sum(np.abs(array_boxes - array_check_points)) 
+        return self.heuristic
+    
+    def depth(self):
+        return self.depth
+    
+    def g(self):
+        return self.cost 
+      
     def __gt__(self, other):
-        if self.compute_heuristic() > other.compute_heuristic():
-            return True
-        else:
-            return False
-    def __lt__(self, other):
-        if self.compute_heuristic() < other.compute_heuristic():
-            return True
-        else :
-            return False
-''' ASSIGN THE MATRIX '''
-def assign_matrix(board):
-    '''return board as same as input board'''
-    return [[board[x][y] for y in range(len(board[0]))] for x in range(len(board))]
-
+        if self.algorithm == "ASTAR": 
+            return (self.h() + self.g()) > (other.h() + other.g()) 
+        elif self.algorithm == "GREEDY": 
+            return (self.h()) > (other.h()) 
+        elif self.algorithm == "UCS": 
+            return (self.g()) > (other.g()) 
+        else: return False
 
 ''' FIND THE PLAYER'S CURRENT POSITION IN A BOARD '''
 def find_position_player(board):
-    '''return position of player in board'''
-    for x in range(len(board)):
-        for y in range(len(board[0])):
-            if board[x][y] == '@':
-                return (x,y)
-    return (-1,-1)  # error board
+    array = np.array(board) 
+    x, y = np.where(array == '@')
+    if len(x) > 0 and len(y) > 0:
+      return (x[0], y[0])
+    else: 
+      return (-1, -1) # error board
 
 
 ''' COMPARE 2 BOARDS '''
 def compare_matrix(board_A, board_B):
-    '''return true if board A is as same as board B'''
-    if len(board_A) != len(board_B) or len(board_A[0]) != len(board_B[0]):
-        return False
-    for i in range(len(board_A)):
-        for j in range(len(board_A[0])):
-            if board_A[i][j] != board_B[i][j]:
-                return False
-    return True
+    array_A = np.array(board_A) 
+    array_B = np.array(board_B)
+    return np.array_equal(array_A, array_B)
+
 
 ''' CHECK WHETHER THE BOARD IS GOAL OR NOT '''
 def check_win(board, list_check_point):
-    '''return true if all check points are coverred by boxes'''
-    for p in list_check_point:
-        if board[p[0]][p[1]] != '$':
-            return False
-    return True
+    return all(board[p[0]][p[1]] == '$' for p in list_check_point)
+
+
+''' CHECK WHETHER A SINGLE BOX IS ON A CHECKPOINT '''
+def is_box_on_check_point(box, list_check_point):
+    return box in list_check_point
+
+
+''' CHECK WHETHER A SIGNLE BOX IS STUCK IN THE CORNER '''
+def check_in_corner(board, x, y, list_check_point):
+    '''return true if board[x][y] in corner'''
+
+    if (
+        (board[x-1][y-1] == '#' and board[x-1][y] == '#' and board[x][y-1] == '#') or
+        (board[x+1][y-1] == '#' and board[x+1][y] == '#' and board[x][y-1] == '#') or
+        (board[x-1][y+1] == '#' and board[x-1][y] == '#' and board[x][y+1] == '#') or
+        (board[x+1][y+1] == '#' and board[x+1][y] == '#' and board[x][y+1] == '#')
+    ) and not is_box_on_check_point((x, y), list_check_point):
+        return True
+    return False
+
 
 ''' CHECK WHETHER THE BOARD ALREADY EXISTED IN THE TRAVERSED LIST'''
 def is_board_exist(board, list_state):
@@ -73,51 +111,6 @@ def is_board_exist(board, list_state):
     for state in list_state:
         if compare_matrix(state.board, board):
             return True
-    return False
-
-''' CHECK WHETHER A SINGLE BOX IS ON A CHECKPOINT '''
-def is_box_on_check_point(box, list_check_point):
-    for check_point in list_check_point:
-        if box[0] == check_point[0] and box[1] == check_point[1]:
-            return True
-    return False
-
-''' CHECK WHETHER AT LEAST ONE BOX IS STUCK IN THE CORNER'''
-def is_board_can_not_win(board, list_check_point):
-    '''return true if box in corner of wall -> can't win'''
-    for x in range(len(board)):
-        for y in range(len(board[0])):
-            if board[x][y] == '$':
-                if check_in_corner(board, x, y, list_check_point):
-                    return True
-    return False
-''' CHECK WHETHER A SIGNLE BOX IS STUCK IN THE CORNER '''
-def check_in_corner(board, x, y, list_check_point):
-    '''return true if board[x][y] in corner'''
-    
-    '''if the box is stuck in the left-top corner and it isn't on the checkpoint'''
-    if board[x-1][y-1] == '#':
-        if board[x-1][y] == '#' and board[x][y-1] == '#':
-            if not is_box_on_check_point((x,y), list_check_point):
-                return True
-            
-    '''if the box is stuck in the left-bot corner and it isn't on the checkpoint'''
-    if board[x+1][y-1] == '#':
-        if board[x+1][y] == '#' and board[x][y-1] == '#':
-            if not is_box_on_check_point((x,y), list_check_point):
-                return True
-            
-    '''if the box is stuck in the right-top corner and it isn't on the checkpoint'''
-    if board[x-1][y+1] == '#':
-        if board[x-1][y] == '#' and board[x][y+1] == '#':
-            if not is_box_on_check_point((x,y), list_check_point):
-                return True
-
-    '''if the box is stuck in the right-bot corner and it isn't on the checkpoint'''
-    if board[x+1][y+1] == '#':
-        if board[x+1][y] == '#' and board[x][y+1] == '#':
-            if not is_box_on_check_point((x,y), list_check_point):
-                return True
     return False
 
 
@@ -132,14 +125,24 @@ def is_all_boxes_stuck(board, list_check_point):
             result = False
     return result
 
+''' CHECK WHETHER AT LEAST ONE BOX IS STUCK IN THE CORNER'''
+def is_board_can_not_win(board, list_check_point):
+    '''return true if box in corner of wall -> can't win'''
+    array = np.array(board)
+    x, y = np.where(array == '$')
+    
+    for i in range(len(x)):
+        if check_in_corner(board, x[i], y[i], list_check_point):
+            return True
+    return False
+
 
 ''' FIND ALL BOXES' POSITIONS '''
 def find_boxes_position(board):
-    result = []
-    for i in range(len(board)):
-        for j in range(len(board[0])):
-            if board[i][j] == '$':
-                result.append((i,j))
+    array = np.array(board)
+    x, y = np.where(array == '$')
+    xy = np.transpose([x, y])
+    result = xy.tolist()
     return result
 
 
@@ -207,8 +210,7 @@ def get_next_pos(board, cur_pos):
 ''' MOVE THE BOARD IN CERTAIN DIRECTIONS '''
 def move(board, next_pos, cur_pos, list_check_point):
     '''return a new board after move'''
-    # MAKE NEW BOARD AS SAME AS CURRENT BOARD
-    new_board = assign_matrix(board) 
+    new_board = deepcopy(board) 
     # FIND NEXT POSITION IF MOVE TO BOX
     if new_board[next_pos[0]][next_pos[1]] == '$':
         x = 2*next_pos[0] - cur_pos[0]
@@ -221,7 +223,8 @@ def move(board, next_pos, cur_pos, list_check_point):
     for p in list_check_point:
         if new_board[p[0]][p[1]] == ' ':
             new_board[p[0]][p[1]] = '%'
-    return new_board 
+    return new_board
+
 
 ''' FIND ALL CHECKPOINTS ON THE BOARD '''
 def find_list_check_point(board):
@@ -229,24 +232,35 @@ def find_list_check_point(board):
         if don't have any check point, return empty list
         it will check num of box, if num of box < num of check point
             return list [(-1,-1)]'''
-    list_check_point = []
+    #list_check_point = []
     num_of_box = 0
-    ''' CHECK THE ENTIRE BOARD TO FIND CHECK POINT AND NUM OF BOX'''
+    array = np.array(board)
+    num_of_box = np.count_nonzero(array=='$')
+    num_of_check_point = np.count_nonzero(array == '%')
+    if num_of_box < num_of_check_point:
+        return [(-1, -1)]
+    
+    x, y = np.where(array == '%')
+    xy = np.transpose([x, y])
+    result = xy.tolist()
+    return result
+
+    ''' CHECK THE ENTIRE BOARD TO FIND CHECK POINT AND NUM OF BOX
     for x in range(len(board)):
         for y in range(len(board[0])):
             if board[x][y] == '$':
                 num_of_box += 1
             elif board[x][y] == '%':
                 list_check_point.append((x,y))
-    ''' CHECK IF NUMBER OF BOX < NUM OF CHECK POINT'''
     if num_of_box < len(list_check_point):
         return [(-1,-1)]
     return list_check_point
-
+    '''
+    
 '''FUNCTION RETURN NEW BOARD AFTER MOVE IN 1 DIRECTION'''
 def move_in_1_direction(board, direct, list_check_point):
     # MAKE NEW BOARD AS SAME AS CURRENT BOARD
-    new_board = assign_matrix(board) 
+    new_board = deepcopy(board)
     
     # GET POSITION OF PLAYER ON CURRENT BOARD AND SET VALUE TO 2 VARIABLES
     cur_pos = find_position_player(board)
@@ -284,7 +298,6 @@ def move_in_1_direction(board, direct, list_check_point):
                 new_board[p[0]][p[1]] = '%'
         return new_board 
     return board
-
 
 def check_movement_direction(previous_position, current_position):
     prev_row, prev_col = previous_position

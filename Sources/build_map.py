@@ -7,7 +7,7 @@ import support_func as spf
 import ctypes
 import const as c
 import sys
-import algo
+import Algorithms as agr
 import keyboard
 '''
 //========================//
@@ -21,12 +21,10 @@ screen = pygame.display.set_mode((1200, 760))
 pygame.display.set_caption('Sokoban Game')
 BACKGROUND = (0, 0, 0) #BLACK
 WHITE = (255, 255, 255)
-stage = 29
-clock = pygame.time.Clock()
 #text_font=pygame.font.Font("Arial",30)
 list_board = []
 algorithm_number = 0
-algorithm_list = ["BFS", "DFS", "A Star", "UCS", "Greedy", "ID", "Hill Climbing", "Beam", "Dijkstra"]
+algorithm_list = ["BFS", "DFS", "ASTAR", "UCS", "GREEDY", "IDFS", "Hill Climbing", "Beam", "Dijkstra"]
 num_states_visited = 0
 '''
 //========================//
@@ -210,8 +208,7 @@ def sokoban(screen, stage):
     global algorithm_number
     global num_states_visited
     pygame.font.init()
-    BACKGROUND = (0, 0, 0) #BLACK
-    WHITE = (255, 255, 255)
+    clock = pygame.time.Clock()
     moved = False
     new_board = []
     backward_matrix = []
@@ -236,29 +233,35 @@ def sokoban(screen, stage):
         display(stage)
         draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
         if solve_button.draw(screen):
-            move_step = []
-            check_points = get_check_points()
-            list_check_point = check_points[stage]
-            if algorithm == "BFS":
-                list_board = algo.BFS_search(maps[stage], list_check_point)
-                num_states_visited = algo.number_states_visited()
-                print(num_states_visited)
-            if algorithm == "DFS":
-                list_board = algo.DFS_search(maps[stage], list_check_point)
-                num_states_visited = algo.number_states_visited()
-                print(num_states_visited)
-            if algorithm == "ID":
-                list_board = algo.ID_search(maps[stage], list_check_point)
-                num_states_visited = algo.number_states_visited()
-                print(num_states_visited)
-            if algorithm == "Dijkstra":
-                list_board = algo.Dijkstra_search(maps[stage], list_check_point)
-                num_states_visited = algo.number_states_visited()
-                print(num_states_visited)  
+            print('SOLVE')
+            if algorithm == "BFS": 
+                list_board = agr.BFS(maps[stage], list_check_points[stage])
+                num_states_visited = agr.number_states_visited()
+            if algorithm == "ASTAR":
+                list_board = agr.ASTAR(maps[stage], list_check_points[stage])
+                num_states_visited = agr.number_states_visited()
+            if algorithm == "GREEDY":
+                list_board = agr.GREEDY(maps[stage], list_check_points[stage])
+            if algorithm == "UCS":
+                list_board = agr.UCS(maps[stage], list_check_points[stage])
+            if algorithm == "IDFS": 
+                list_board = agr.IDFS(maps[stage], list_check_points[stage])
+            if algorithm == "DFS": 
+                list_board = agr.DFS(maps[stage], list_check_points[stage])
+                num_states_visited = agr.number_states_visited()
+                    
             stateLenght = len(list_board[0])
             AI_solving= True
             currentState = 0
-                
+     
+        if len(list_board) > 0 and AI_solving == True:
+            clock.tick(3)
+            new_board = list_board[0][currentState]
+            currentState = currentState + 1
+            moved = True
+            if currentState == stateLenght:
+                AI_solving = False   
+         
         if reset_button.draw(screen):
             print('RESET')
             initGame(maps[stage])
@@ -274,24 +277,11 @@ def sokoban(screen, stage):
             if algorithm_number == (len(algorithm_list)):
                 algorithm_number = 0
             algorithm = algorithm_list[algorithm_number]
-            
         if start_button.draw(screen):
             print('RESET')
             
-            
-            
-        if len(list_board) > 0 and AI_solving == True:
-            clock.tick(3)
-            new_board = list_board[0][currentState]
-            sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
-            sound.play()
-            currentState = currentState + 1
-            moved = True
-            if currentState == stateLenght:
-                AI_solving = False
         
         for event in pygame.event.get():
-            
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if back_rect.collidepoint(event.pos):
                     running = False
@@ -347,19 +337,15 @@ def sokoban(screen, stage):
                 playsound = True
         pygame.display.update()
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
-        
-        
-    
-        
-            
-            
-    #pygame.quit()
 
+
+        
 
 def move_event(direct):
     keyboard.press(direct)
     pygame.time.wait(300)
     keyboard.release(direct)
+
 
 '''
 //==================//
@@ -400,7 +386,6 @@ def display(stage):
     draw_text("Sokoban Game", text_font, (255, 255, 255), 800, 80)
     draw_text("Score: ", textsmall_font, (255, 255, 255), 100, 15)
     draw_text("Time: ", textsmall_font, (255, 255, 255), 400, 15)
-    
 
     mapText = textsmall_font.render("Lv. " + str(stage+1), True, WHITE)
     mapRect = mapText.get_rect(center=(955, 280))
@@ -425,6 +410,5 @@ def main():
 
 if __name__ == "__main__":
 	main()
-
 
 
