@@ -229,7 +229,7 @@ def sokoban(screen, stage):
         if solve_button.draw(screen):
             print('SOLVE')
             if algorithm == "BFS": 
-                list_board = agr.ASTAR(maps[stage], list_check_points[stage])
+                list_board = agr.IDFS(maps[stage], list_check_points[stage])
                 print(list_board[1])
             if algorithm == "ASTAR":
                 list_board = agr.ASTAR(maps[stage], list_check_points[stage])
@@ -237,6 +237,10 @@ def sokoban(screen, stage):
                 list_board = agr.GREEDY(maps[stage], list_check_points[stage])
             if algorithm == "UCS":
                 list_board = agr.UCS(maps[stage], list_check_points[stage])
+            if algorithm == "IDFS": 
+                list_board = agr.IDFS(maps[stage], list_check_points[stage])
+            if algorithm == "DFS": 
+                list_board = agr.DFS(maps[stage], list_check_points[stage])
                     
             stateLenght = len(list_board[0])
             AI_solving= True

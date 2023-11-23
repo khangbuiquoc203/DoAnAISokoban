@@ -16,6 +16,7 @@ class state:
         self.board = board
         self.state_parent = state_parent
         self.cost = cost
+        self.depth = cost
         self.heuristic = 0
         self.algorithm = algorithm
         self.check_points = deepcopy(list_check_point)
