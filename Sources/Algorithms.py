@@ -24,6 +24,10 @@ def ASTAR(board, list_check_point):
         cur_pos = spf.find_position_player(now_state.board)
 
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
+        num_shuffles = 23
+
+        for _ in range(num_shuffles):
+            random.shuffle(list_can_move)
         for next_pos in list_can_move:
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
             num_states_visited+=1
@@ -67,13 +71,22 @@ def GREEDY(board, list_check_point):
     
     heuristic_queue = PriorityQueue()
     heuristic_queue.put(start_state)
+    
+    global num_states_visited
+    num_states_visited = 0
+    
     while not heuristic_queue.empty():
         now_state = heuristic_queue.get()
         cur_pos = spf.find_position_player(now_state.board)
     
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
+        num_shuffles = 23
+
+        for _ in range(num_shuffles):
+            random.shuffle(list_can_move)
         for next_pos in list_can_move:
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
+            num_states_visited += 1
             if spf.is_board_exist(new_board, list_state):
                 continue
             if spf.is_board_can_not_win(new_board, list_check_point):
@@ -111,6 +124,9 @@ def UCS(board, list_check_point):
     start_state = spf.state(board, None, 0, list_check_point, "UCS")
     list_state = [start_state]
     
+    global num_states_visited
+    num_states_visited = 0
+    
     cost_queue = PriorityQueue()
     cost_queue.put(start_state)
     while not cost_queue.empty():
@@ -118,8 +134,13 @@ def UCS(board, list_check_point):
         cur_pos = spf.find_position_player(now_state.board)
     
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
+        num_shuffles = 23
+
+        for _ in range(num_shuffles):
+            random.shuffle(list_can_move)
         for next_pos in list_can_move:
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
+            num_states_visited += 1
             if spf.is_board_exist(new_board, list_state):
                 continue
             if spf.is_board_can_not_win(new_board, list_check_point):
@@ -276,6 +297,9 @@ def depth_limited_DFS(board, list_check_point, max_depth):
     list_state = [start_state]
     list_visit = [start_state]
     
+    global num_states_visited
+    num_states_visited = 0
+    
     while len(list_visit) != 0:
         now_state = list_visit.pop()
         cur_pos = spf.find_position_player(now_state.board)
@@ -287,6 +311,7 @@ def depth_limited_DFS(board, list_check_point, max_depth):
 
         for next_pos in list_can_move:
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
+            num_states_visited += 1
             if spf.is_board_exist(new_board, list_state):
                 continue
             

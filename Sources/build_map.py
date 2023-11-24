@@ -232,6 +232,7 @@ def sokoban(screen, stage):
             initGame(new_board)
         display(stage)
         draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
+        draw_text("Solve step: " + str(stateLenght), textsmall_font, (255, 255, 255), 700, 50)
         if solve_button.draw(screen):
             print('SOLVE')
             if algorithm == "BFS": 
@@ -242,10 +243,13 @@ def sokoban(screen, stage):
                 num_states_visited = agr.number_states_visited()
             if algorithm == "GREEDY":
                 list_board = agr.GREEDY(maps[stage], list_check_points[stage])
+                num_states_visited = agr.number_states_visited()
             if algorithm == "UCS":
                 list_board = agr.UCS(maps[stage], list_check_points[stage])
+                num_states_visited = agr.number_states_visited()
             if algorithm == "IDFS": 
                 list_board = agr.IDFS(maps[stage], list_check_points[stage])
+                num_states_visited = agr.number_states_visited()
             if algorithm == "DFS": 
                 list_board = agr.DFS(maps[stage], list_check_points[stage])
                 num_states_visited = agr.number_states_visited()
