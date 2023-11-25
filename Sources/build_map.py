@@ -2,13 +2,14 @@ import numpy as np
 import os
 import pygame
 import re
-import button
+import controls
 import support_func as spf
 import ctypes
 import const as c
 import sys
 import Algorithms as agr
 import keyboard
+from enum import Enum
 '''
 //========================//
 //         PYGAME         //
@@ -24,7 +25,7 @@ WHITE = (255, 255, 255)
 #text_font=pygame.font.Font("Arial",30)
 list_board = []
 algorithm_number = 0
-algorithm_list = ["BFS", "DFS", "ASTAR", "UCS", "GREEDY", "IDFS", "Hill Climbing", "Beam", "Dijkstra"]
+algorithm_list = ["BFS", "DFS", "ASTAR", "UCS", "GREEDY", "IDFS", "Hill", "Beam", "Dijkstra"]
 num_states_visited = 0
 '''
 //========================//
@@ -44,21 +45,6 @@ init_background = pygame.image.load(os.getcwd() + '\\init_background.png')
 text_font=pygame.font.Font(os.getcwd() + '\\game.ttf',45)
 textsmall_font=pygame.font.Font(os.getcwd() + '\\game.ttf',30)
 
-''' DRAW BUTTON'''
-start_img = pygame.image.load(os.getcwd()+'\\start_btn.png').convert_alpha()
-solve_img = pygame.image.load(os.getcwd()+'\\solve_btn.png').convert_alpha()
-reset_img = pygame.image.load(os.getcwd()+'\\reset_btn.png').convert_alpha()
-algos_img = pygame.image.load(os.getcwd()+'\\algos_btn.png').convert_alpha()
-player_img = pygame.image.load(os.getcwd()+'\\player_name.png').convert_alpha()
-level_img = pygame.image.load(os.getcwd()+'\\level.png').convert_alpha()
-
-
-player_button = button.Button(780, 200, player_img, 1)
-level_button = button.Button(780, 260, level_img, 1)
-start_button = button.Button(780, 320, start_img, 1)
-solve_button = button.Button(780, 380, solve_img, 1)
-reset_button = button.Button(780, 440, reset_img, 1)
-algos_button = button.Button(780, 500, algos_img, 1)
 
 
 '''
@@ -160,47 +146,117 @@ def format_row(row):
 
 
 '''
-//===========================//
-//      A BRICK OR A BOX     //
-//     MEASURING 32X32       //
-//===========================//
+Vẽ board ra màn hình
+Kích thước width cố định của board là 600px, từ đó suy ra kích thước 1 box
+Height phụ thuộc vào box đã đc tính
 '''
-def renderMap(board):
+# Draw board
+def drawBoard(board):
     width = len(board[0])  
-    height = len(board)  
+    height = len(board)   
+    # kích thước cố định của board là 600px, lấy size này chia cho số box sẽ ra size của mỗi box
+    tile_size = c.BOARD_SIZE//width 
 
-    screen_width = 1200  
-    screen_height = 760  
+    # resize image
+    resize_space = pygame.transform.scale(space, (tile_size, tile_size))
+    resize_wall = pygame.transform.scale(wall, (tile_size, tile_size))
+    resize_box = pygame.transform.scale(box, (tile_size, tile_size))
+    resize_point = pygame.transform.scale(point, (tile_size, tile_size))
+    resize_player = pygame.transform.scale(player, (tile_size, tile_size))
 
-    tile_size = 32  
-
-    map_width_pixels = width * tile_size  
-    map_height_pixels = height * tile_size  
-
-    
-    map_offset_x = (screen_width - map_width_pixels) // 10
-    map_offset_y = (screen_height - map_height_pixels) // 2
-
+    # draw board
     for i in range(height):
         for j in range(width):
-            screen.blit(space, (j * tile_size + map_offset_x, i * tile_size + map_offset_y))
+            screen.blit(resize_space, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
             if board[i][j] == '#':
-                screen.blit(wall, (j * tile_size + map_offset_x, i * tile_size + map_offset_y))
+                screen.blit(resize_wall, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
             if board[i][j] == '$':
-                screen.blit(box, (j * tile_size + map_offset_x, i * tile_size + map_offset_y))
+                screen.blit(resize_box, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
             if board[i][j] == '%':
-                screen.blit(point, (j * tile_size + map_offset_x, i * tile_size + map_offset_y))
+                screen.blit(resize_point, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
             if board[i][j] == '@':
-                screen.blit(player, (j * tile_size + map_offset_x, i * tile_size + map_offset_y))
+                screen.blit(resize_player, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
 
 ''' VARIABLE '''
 algorithm = algorithm_list[0]
+
+''' DRAW BUTTON'''
+# start_img = pygame.image.load(os.getcwd()+'\\start_btn.png').convert_alpha()
+# solve_img = pygame.image.load(os.getcwd()+'\\solve_btn.png').convert_alpha()
+# reset_img = pygame.image.load(os.getcwd()+'\\reset_btn.png').convert_alpha()
+# algos_img = pygame.image.load(os.getcwd()+'\\algos_btn.png').convert_alpha()
+# player_img = pygame.image.load(os.getcwd()+'\\player_name.png').convert_alpha()
+# level_img = pygame.image.load(os.getcwd()+'\\level.png').convert_alpha()
+
+
+# player_button = button.Button(780, 200, player_img, 1)
+# level_button = button.Button(780, 260, level_img, 1)
+# start_button = button.Button(780, 320, start_img, 1)
+# solve_button = button.Button(780, 380, solve_img, 1)
+# reset_button = button.Button(780, 440, reset_img, 1)
+# algos_button = button.Button(780, 500, algos_img, 1)
+
+''' Controls '''
+def create_control_game(control_game, control_info):
+    imgs = ["button.png", "square.png", "square.png", "square.png", "square.png", "square.png", "square.png" ]
+
+    texts = []
+    font = pygame.font.Font(c.font_text_path, c.TEXT_SIZE-3)
+    texts.append(font.render("BFS", True, 'black'))
+    icon_play = pygame.image.load(c.icon_path + 'Play.png')
+    icon_pause = pygame.image.load(c.icon_path + 'Pause.png')
+    texts.append(icon_play)
+    texts.append(icon_pause)
+
+    for i in range(3):    
+        image = pygame.image.load(c.png_path + imgs[i])
+        image_hover = pygame.image.load(c.png_path + 'hover_' + imgs[i])
+        if len(control_game) != 0:
+            location_x = control_game[i-1].image.get_width() + control_game[i-1].image_rect.left + 20
+        else:
+            location_x = 60
+        image_rect = image.get_rect(topleft=(location_x, 120))
+        text_rect = texts[i].get_rect(center=image_rect.center)
+        text_rect.top -= 5
+        
+        control_game.append(controls.Button(image=image, image_rect=image_rect, text=texts[i], text_rect=text_rect, image_hover=image_hover))
+    icons = [ "Home.png", "Replay.png", "Undo.png", "SoundOn.png"]
+    for i in range(4):
+        image = pygame.image.load(c.png_path + imgs[i+3])
+        image_hover = pygame.image.load(c.png_path + 'hover_' + imgs[i+3])
+        
+        image_rect = image.get_rect(topleft=(60 + (22+image.get_width())*i, c.SCREEN_HEIGHT - image.get_height() - 40))
+        
+        icon = pygame.image.load(c.icon_path + icons[i])
+        icon_rect = icon.get_rect(center=image_rect.center)
+        icon_rect.top -= 5
+        
+        control_game.append(controls.Button(image=image, image_rect=image_rect, text=icon, text_rect=icon_rect, image_hover=image_hover))
+    
+    # Infomation    
+    control_info.append(controls.Label(c.font_title_path, "Move: 1230", size=38, color=c.TITLE_COLOR, location_topleft=(50,10)))
+    control_info.append(controls.Label(c.font_title_path, "Score: 10000", size=38, color=c.TITLE_COLOR, location_topleft=(430,10)))
+    control_info.append(controls.Label(c.font_title_path, "Time: 12:30", size=38, color=c.TITLE_COLOR, location_topleft=(850,10)))
+
+class enum_of_control_game(Enum):
+    ALGORITHM = 0
+    PLAY = 1
+    PAUSE = 2
+    HOME = 3
+    REPLAY = 4
+    UNDO = 5
+    SOUND =6
+
 ''' 
 //===========================//
 //      SOKOBAN FUNCTION     //
 //===========================//
 '''
 def sokoban(screen, stage):
+    control_game = [] #0: algorithm, 1: play, 2: pause, 3: home, 4: replay, 5: undo, 6: sound
+    control_info = []
+    create_control_game(control_game, control_info)
+    
     running = True 
     global algorithm
     global player
@@ -216,24 +272,25 @@ def sokoban(screen, stage):
     stateLenght = 0
     AI_solving = False
     currentState = 0
-    # back button
-    back = pygame.image.load(c.icon_path)
-    back_rect = back.get_rect(topleft=(10,c.SCREEN_HEIGHT-back.get_height()))
     while running:     
         screen.blit(init_background, (0, 0))
         
-        # back button
-        screen.blit(back, back_rect)
+        for i in control_info:
+            i.draw(screen)
+            
+        for i in control_game:
+            i.draw(screen)
+        pygame.draw.rect(screen, 'white', pygame.Rect(60, 220, 400, 360))
         
         if moved == False:
-            initGame(maps[stage])
+            drawBoard(maps[stage])
             new_board = maps[stage]
         else:
-            initGame(new_board)
-        display(stage)
-        draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
-        draw_text("Solve step: " + str(stateLenght), textsmall_font, (255, 255, 255), 700, 50)
-        if solve_button.draw(screen):
+            drawBoard(new_board)
+        #display(stage)
+        #draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
+        #draw_text("Solve step: " + str(stateLenght), textsmall_font, (255, 255, 255), 700, 50)
+        if control_game[1].is_clicked():
             print('SOLVE')
             if algorithm == "BFS": 
                 list_board = agr.BFS(maps[stage], list_check_points[stage])
@@ -265,36 +322,41 @@ def sokoban(screen, stage):
             moved = True
             if currentState == stateLenght:
                 AI_solving = False   
-         
-        if reset_button.draw(screen):
-            print('RESET')
-            initGame(maps[stage])
-            new_board = maps[stage]
-            playsound = False
-            moved == False
-        if player_button.draw(screen):
-            print('RESET')
-        if level_button.draw(screen):
-            print('RESET')
-        if algos_button.draw(screen):
+        
+        if control_game[enum_of_control_game.ALGORITHM.value].is_clicked():
             algorithm_number +=1
             if algorithm_number == (len(algorithm_list)):
                 algorithm_number = 0
             algorithm = algorithm_list[algorithm_number]
-        if start_button.draw(screen):
-            print('RESET')
             
+            # Thay đổi text của button algorithm
+            font = pygame.font.Font(c.font_text_path, c.TEXT_SIZE-3)
+            control_game[0].text = font.render(str(algorithm), True, 'black')
+            rect=control_game[0].text.get_rect(center=control_game[0].image_rect.center)
+            rect.top-=5
+            control_game[0].text_rect = rect
+            
+        if control_game[enum_of_control_game.HOME.value].is_clicked():
+            running = False 
+            
+        if control_game[enum_of_control_game.REPLAY.value].is_clicked():
+             print('REPLAY')
+             drawBoard(maps[stage])
+             new_board = maps[stage]
+             playsound = False
+             moved == False
+             
+        if control_game[enum_of_control_game.UNDO.value].is_clicked():
+            new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
+            moved = True
         
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if back_rect.collidepoint(event.pos):
-                    running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
                     moved = True
                 if event.key == pygame.K_SPACE:
-                    initGame(maps[stage])
+                    drawBoard(maps[stage])
                     new_board = maps[stage]
                     playsound = False
                     moved == False
@@ -325,7 +387,7 @@ def sokoban(screen, stage):
                     sound.play()
                     moved = True
                 if event.key == pygame.K_RETURN and spf.check_win(new_board, list_check_points[stage]):
-                    initGame(maps[stage+1])
+                    drawBoard(maps[stage+1])
                     new_board = maps[stage+1]
                     stage+=1
                     playsound = False
@@ -370,15 +432,6 @@ def load_matrix_from_txt(file_path):
             row = line.strip().split(', ')
             read_matrix.append(row) 
     return read_matrix
-'''
-//==================//
-//      DISPLAY     //
-//    INITIALIZE    //
-//      SCENE       //
-//==================//
-'''
-def initGame(map):
-	renderMap(map)
 
 def Mbox(title, text, style):
     ctypes.windll.user32.MessageBoxW(0, text, title, style)

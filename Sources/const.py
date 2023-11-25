@@ -4,12 +4,22 @@ import os
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 760
 
+# board
+BOARD_SIZE = 600
+BOARD_LOCATION_X = (SCREEN_WIDTH-BOARD_SIZE)//2 + 240
+BOARD_LOCATION_Y = (SCREEN_HEIGHT-BOARD_SIZE)//2 + 40
+
 # title
 font_title_path = os.getcwd() + '\\..\\Assets\\font\\title_font.ttf'
 TITLE_BASE_X = SCREEN_WIDTH//2
 TITLE_BASE_Y = 140
 TITLE_COLOR = '#FDD250'
 TITLE_SIZE = 120
+
+# text
+font_text_path = os.getcwd() + '\\..\\Assets\\font\\text_font.otf'
+TEXT_COLOR = '#A4925F'
+TEXT_SIZE = 35
 
 # button
 button_path = os.getcwd() + '\\..\\Assets\\png\\button.png'
@@ -27,12 +37,7 @@ BUTTON_MAP_BASE_Y = 280
 MAP_COLOR='#FDE294'
 
 # icon
-icon_path = os.getcwd() + '\\..\\Assets\\icon\\back.png'
-
-# text
-font_text_path = os.getcwd() + '\\..\\Assets\\font\\text_font.otf'
-TEXT_COLOR = '#A4925F'
-TEXT_SIZE = 35
+icon_path = os.getcwd() + '\\..\\Assets\\icon\\'
 
 # color
 
@@ -60,5 +65,4 @@ MAP_EACH_LEVEL = 15
 
 USERNAME = 'phong'
 
-asset_button_path = os.getcwd() + "\\..\\Assets\\login"
-assets_path = os.getcwd() + '\\..\\Assets\\'
+png_path = os.getcwd() + '\\..\\Assets\\png\\'
