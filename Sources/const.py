@@ -12,7 +12,7 @@ BOARD_LOCATION_Y = (SCREEN_HEIGHT-BOARD_SIZE)//2 + 40
 # title
 font_title_path = os.getcwd() + '\\..\\Assets\\font\\title_font.ttf'
 TITLE_BASE_X = SCREEN_WIDTH//2
-TITLE_BASE_Y = 140
+TITLE_BASE_Y = 100
 TITLE_COLOR = '#FDD250'
 TITLE_SIZE = 120
 
@@ -59,10 +59,8 @@ BUTTON_HEIGHT = 40
 BUTTON_MAP_X = 55
 BUTTON_MAP_Y = 30
 
-
-
 MAP_EACH_LEVEL = 15
 
-USERNAME = 'phong'
-
 png_path = os.getcwd() + '\\..\\Assets\\png\\'
+login_path = os.getcwd() + '\\..\\Assets\\login\\'
+assets_path = os.getcwd() + '\\..\\Assets\\'
