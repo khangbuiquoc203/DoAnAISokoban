@@ -1,9 +1,10 @@
+import User
 import pygame
 from pygame.locals import *
 import sys
 import const as c
 from build_map import *
-import User
+
 def init():
     pygame.init()
     screen = pygame.display.set_mode((c.SCREEN_WIDTH, c.SCREEN_HEIGHT)) 

@@ -275,6 +275,53 @@ def DFS(board, list_check_point):
     print("Not Found")
     return []
 
+def LDFS(board, list_check_point):
+    start_time = time.time()
+    max_depth=50
+    start_state = spf.state(board, None, 0, list_check_point, "LDFS")
+
+    stack = [(start_state, 0)]  # Dùng stack để theo dõi trạng thái và độ sâu
+    list_state = [start_state]
+
+    global num_states_visited
+    num_states_visited = 0
+
+    while stack:
+        now_state, current_depth = stack.pop()
+        cur_pos = spf.find_position_player(now_state.board)
+
+        list_can_move = spf.get_next_pos(now_state.board, cur_pos)
+        num_shuffles = 23
+
+        for _ in range(num_shuffles):
+            random.shuffle(list_can_move)
+
+        for next_pos in list_can_move:
+            new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
+            num_states_visited += 1
+
+            if spf.is_board_exist(new_board, list_state) or current_depth >= max_depth:
+                continue
+
+            if spf.is_board_can_not_win(new_board, list_check_point) or spf.is_all_boxes_stuck(new_board, list_check_point):
+                continue
+
+            new_state = spf.state(new_board, now_state, current_depth + 1, list_check_point, "LDFS")
+
+            if spf.check_win(new_board, list_check_point):
+                print("Found win")
+                return (new_state.get_line(), len(list_state))
+
+            list_state.append(new_state)
+            stack.append((new_state, current_depth + 1))
+
+        end_time = time.time()
+        if end_time - start_time > spf.TIME_OUT:
+            return []
+
+    print("Not Found")
+    return []
+
 def IDFS(board, list_check_point):
     start_time = time.time()
     max_depth = 1  # Initial depth limit

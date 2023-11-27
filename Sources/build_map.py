@@ -26,7 +26,7 @@ WHITE = (255, 255, 255)
 #text_font=pygame.font.Font("Arial",30)
 list_board = []
 algorithm_number = 0
-algorithm_list = ["BFS", "DFS", "ASTAR", "UCS", "GREEDY", "IDFS", "Hill", "Beam", "Dijkstra"]
+algorithm_list = ["BFS", "DFS", "ASTAR", "UCS", "GREEDY", "IDFS", "Hill", "Beam", "LDFS"]
 num_states_visited = 0
 '''
 //========================//
@@ -316,8 +316,10 @@ def sokoban(screen, stage, user):
             if algorithm == "DFS": 
                 list_board = agr.DFS(maps[stage], list_check_points[stage])
                 num_states_visited = agr.number_states_visited()
-                    
-            stateLenght = len(list_board[0])
+            if algorithm == "LDFS": 
+                list_board = agr.LDFS(maps[stage], list_check_points[stage])
+                num_states_visited = agr.number_states_visited()
+            stateLenght = len(list_board[0]) if list_board != [] else 0
             AI_solving= True
             currentState = 0
      
