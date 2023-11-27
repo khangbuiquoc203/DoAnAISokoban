@@ -222,18 +222,21 @@ def game(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:    
-                pygame.mixer.Sound(c.click_sound_path).play()           
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:   
                 if hover == 0:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     play(screen)
-                    hover = -1
+                    hover = -1 
                 elif hover == 1:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     print('score')
                     hover = -1
                 elif hover == 2:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     print('option')
                     hover = -1
                 elif hover == 3:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     quit()
                
                 
@@ -270,18 +273,21 @@ def play(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  
-                pygame.mixer.Sound(c.click_sound_path).play()             
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:        
                 if hover == 0:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     player_1(screen)
                     hover = -1
                 elif hover == 1:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     player_2(screen)
                     hover = -1
                 elif hover == 2:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     AI(screen)
                     hover = -1
                 elif hover == 3:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     running = False
         
                 
@@ -328,17 +334,20 @@ def player_1(screen):
                         break
                     hover = -1
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:    
-                pygame.mixer.Sound(c.click_sound_path).play()           
                 if hover == 0:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=0)
                     hover = -1
                 elif hover == 1:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=1)
                     hover = -1
                 elif hover == 2:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=2)
                     hover = -1
                 elif hover == 3:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     running = False
         
         
@@ -374,18 +383,21 @@ def player_2(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:        
-                pygame.mixer.Sound(c.click_sound_path).play()       
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:    
                 if hover == 0:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=0)
                     hover = -1
                 elif hover == 1:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=1)
                     hover = -1
                 elif hover == 2:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=2)
                     hover = -1
                 elif hover == 3:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     running = False
         
         
@@ -421,18 +433,21 @@ def AI(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:        
-                pygame.mixer.Sound(c.click_sound_path).play()       
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:      
                 if hover == 0:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=0)
                     hover = -1
                 elif hover == 1:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=1)
                     hover = -1
                 elif hover == 2:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     map(screen, level=2)
                     hover = -1
                 elif hover == 3:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     running = False
         
         
@@ -472,14 +487,12 @@ def map(screen, level):
                     hover = -1
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:     
-                pygame.mixer.Sound(c.click_sound_path).play()          
                 if hover != -1 and int(user.score[level*10 + hover]) != -1:
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     sokoban(screen, buttons[hover][4], user)
                     hover = -1 # đặt lại hover mỗi lần load map
                 if back_rect.collidepoint(event.pos):
+                    pygame.mixer.Sound(c.click_sound_path).play()           
                     running = False
-        
-        
-        
-                
+      
         pygame.display.update()

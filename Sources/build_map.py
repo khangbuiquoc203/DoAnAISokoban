@@ -182,22 +182,6 @@ def drawBoard(board):
 ''' VARIABLE '''
 algorithm = algorithm_list[0]
 
-''' DRAW BUTTON'''
-# start_img = pygame.image.load(os.getcwd()+'\\start_btn.png').convert_alpha()
-# solve_img = pygame.image.load(os.getcwd()+'\\solve_btn.png').convert_alpha()
-# reset_img = pygame.image.load(os.getcwd()+'\\reset_btn.png').convert_alpha()
-# algos_img = pygame.image.load(os.getcwd()+'\\algos_btn.png').convert_alpha()
-# player_img = pygame.image.load(os.getcwd()+'\\player_name.png').convert_alpha()
-# level_img = pygame.image.load(os.getcwd()+'\\level.png').convert_alpha()
-
-
-# player_button = button.Button(780, 200, player_img, 1)
-# level_button = button.Button(780, 260, level_img, 1)
-# start_button = button.Button(780, 320, start_img, 1)
-# solve_button = button.Button(780, 380, solve_img, 1)
-# reset_button = button.Button(780, 440, reset_img, 1)
-# algos_button = button.Button(780, 500, algos_img, 1)
-
 ''' Controls '''
 def create_control_game(control_game, control_info):
     imgs = ["button.png", "square.png", "square.png", "square.png", "square.png", "square.png", "square.png" ]
@@ -236,9 +220,9 @@ def create_control_game(control_game, control_info):
         control_game.append(controls.Button(image=image, image_rect=image_rect, text=icon, text_rect=icon_rect, image_hover=image_hover))
     
     # Infomation    
-    control_info.append(controls.Label(c.font_title_path, "Move: 1230", size=38, color=c.TITLE_COLOR, location_topleft=(50,10)))
-    control_info.append(controls.Label(c.font_title_path, "Score: 10000", size=38, color=c.TITLE_COLOR, location_topleft=(430,10)))
-    control_info.append(controls.Label(c.font_title_path, "Time: 12:30", size=38, color=c.TITLE_COLOR, location_topleft=(850,10)))
+    control_info.append(controls.Label(c.font_title_path, "Lv: 0", size=38, color=c.TITLE_COLOR, location_topleft=(60,20)))
+    control_info.append(controls.Label(c.font_title_path, "Move: 0", size=38, color=c.TITLE_COLOR, location_topleft=(540,20)))
+    control_info.append(controls.Label(c.font_title_path, "Time: 0", size=38, color=c.TITLE_COLOR, location_topleft=(850,20)))
 
 class enum_of_control_game(Enum):
     ALGORITHM = 0
@@ -256,7 +240,7 @@ class enum_of_control_game(Enum):
 '''
 def sokoban(screen, stage, user):
     control_game = [] #0: algorithm, 1: play, 2: pause, 3: home, 4: replay, 5: undo, 6: sound
-    control_info = []
+    control_info = [] #0: lv, 1: move, 2: time
     create_control_game(control_game, control_info)
     
     running = True 
@@ -270,16 +254,29 @@ def sokoban(screen, stage, user):
     moved = False
     new_board = []
     backward_matrix = []
-    playsound = False
     stateLenght = 0
     AI_solving = False
     currentState = 0
     
-    temp = False
+    # Thiết lập thời gian ban đầu (tính theo mili giây)
+    start_time = pygame.time.get_ticks()
+    elapsed_time = 0
+    # Move
+    move_count = 0
     while running:     
+        # Draw stage
+        control_info[0] = controls.Label(c.font_title_path, "Lv: "+str(stage+1), size=38, color=c.TITLE_COLOR, location_topleft=(60,20))
+        # Handle time
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - start_time
+        seconds = elapsed_time // 1000
+        control_info[2] = controls.Label(c.font_title_path, "Time: "+str(seconds//60)+":"+str(seconds%60), size=38, color=c.TITLE_COLOR, location_topleft=(850,20))
         screen.blit(init_background, (0, 0))
         pygame.display.set_icon(icon_image)
+        # Handle move
+        control_info[1] = controls.Label(c.font_title_path, "Move: "+str(move_count), size=38, color=c.TITLE_COLOR, location_topleft=(540,20))
         
+        # draw control
         for i in control_info:
             i.draw(screen)
             
@@ -287,11 +284,6 @@ def sokoban(screen, stage, user):
             i.draw(screen)
         pygame.draw.rect(screen, 'white', pygame.Rect(60, 220, 400, 360))
         
-        if moved == False:
-            drawBoard(maps[stage])
-            new_board = maps[stage]
-        else:
-            drawBoard(new_board)
         #display(stage)
         #draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
         #draw_text("Solve step: " + str(stateLenght), textsmall_font, (255, 255, 255), 700, 50)
@@ -324,11 +316,14 @@ def sokoban(screen, stage, user):
             currentState = 0
      
         if len(list_board) > 0 and AI_solving == True:
-            clock.tick(3)
+            clock.tick(5)
+            new_list_board = list_board[0][1:]
             nowpos = spf.find_position_player(new_board)
-            nextpos = spf.find_position_player(list_board[0][currentState])
+            print(currentState)
+            print(len(new_list_board))
+            nextpos = spf.find_position_player(new_list_board[currentState-1])
             direct = spf.check_movement_direction(nowpos,nextpos)
-            new_board = list_board[0][currentState]
+            new_board = new_list_board[currentState]
             if direct == 'w':
                 player = pygame.image.load(assets_path + '\\playerup.png')
             if direct == 's':
@@ -337,11 +332,11 @@ def sokoban(screen, stage, user):
                 player = pygame.image.load(assets_path + '\\playerleft.png')
             if direct == 'd':
                 player = pygame.image.load(assets_path + '\\playerright.png')
-            sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
-            sound.play()
+            pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
+            move_count += 1
             currentState = currentState + 1
             moved = True
-            if currentState == stateLenght:
+            if currentState == stateLenght-1:
                 AI_solving = False   
         
         if control_game[enum_of_control_game.ALGORITHM.value].is_clicked():
@@ -364,88 +359,137 @@ def sokoban(screen, stage, user):
             
         if control_game[enum_of_control_game.REPLAY.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
-            print('REPLAY')
             drawBoard(maps[stage])
             new_board = maps[stage]
-            playsound = False
             moved == False
+            move_count = 0
              
         if control_game[enum_of_control_game.UNDO.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
             new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
             moved = True
+            move_count -= 1
         
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
                     moved = True
+                    move_count -= 1
                 if event.key == pygame.K_SPACE:
                     drawBoard(maps[stage])
                     new_board = maps[stage]
-                    playsound = False
                     moved == False
+                    move_count = 0
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage]) 
                     player = pygame.image.load(assets_path + '\\playerup.png')
-                    sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
-                    sound.play()
+                    pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
                     moved = True
+                    move_count += 1
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])
-                    sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
-                    player = pygame.image.load(assets_path + '\\playerdown.png')
-                    sound.play()
+                    pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
                     moved = True
+                    move_count += 1
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])
                     player = pygame.image.load(assets_path + '\\playerleft.png')
-                    sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
-                    sound.play()
+                    pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
                     moved = True
+                    move_count += 1
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])
                     player = pygame.image.load(assets_path + '\\playerright.png')
-                    sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
-                    sound.play()
+                    pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
                     moved = True
-                if event.key == pygame.K_RETURN and spf.check_win(new_board, list_check_points[stage]):
-                    if stage == 29:
-                        drawBoard(maps[stage])
-                        new_board = maps[stage]
-                        playsound = False
-                        moved == False
-                    drawBoard(maps[stage+1])
-                    new_board = maps[stage+1]
-                    stage+=1
-                    playsound = False
-                    moved = False
+                    move_count += 1
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
                 
-        if spf.check_win(new_board, list_check_points[stage]):
-            temp = True
-            user.score[stage] = 10
-            if stage != 29:
-                user.score[stage+1] = 0
-            draw_text("Press enter to continue!", textsmall_font, (255, 255, 255), 650, 400)
-            if playsound == False:
-                sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
-                sound.play()
-                playsound = True
-        if temp:
-            User.update_user(user)
-            temp = False
+        if moved == False:
+            drawBoard(maps[stage])
+            new_board = maps[stage]
+        else:
+            drawBoard(new_board)
         pygame.display.update()
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
-
-
         
+        if spf.check_win(new_board, list_check_points[stage]):
+            select_in_menu = menu(screen, user, stage, 1000-move_count*seconds, seconds, move_count)
+            start_time = pygame.time.get_ticks()
+            move_count = 0
+            if select_in_menu == 0:
+                running = False
+            elif select_in_menu == 1:
+                pygame.mixer.Sound(c.click_sound_path).play()
+                drawBoard(maps[stage])
+                new_board = maps[stage]
+                moved == False
+            elif select_in_menu == 2:
+                if stage == 29:
+                    drawBoard(maps[stage])
+                    new_board = maps[stage]
+                    moved == False
+                drawBoard(maps[stage+1])
+                new_board = maps[stage+1]
+                stage+=1
+                moved = False
+        
+
+
+def menu(screen, user, stage, score, time, move):
+    pygame.mixer.Sound(assets_path + '\\winsound.mp3').play()
+    user.score[stage] = score
+    if stage != 29:
+        user.score[stage+1] = 0
+    User.update_user(user)
+    result = -1
+    menu = pygame.image.load('E:\\LapTrinh\\Python\\DoAnAISokoban\\Assets\\png\\menu.png')
+    rect = menu.get_rect(center=(c.SCREEN_WIDTH//2,c.SCREEN_HEIGHT//2))
+    # button
+    btn_home = pygame.image.load(c.icon_path+'Home.png')
+    rect_home = btn_home.get_rect(centerx=rect.centerx-80, centery=rect.centery+120)
+    btn_replay = pygame.image.load(c.icon_path+'Replay.png')
+    rect_replay = btn_replay.get_rect(centerx=rect.centerx, centery=rect.centery+120)
+    btn_next = pygame.image.load(c.icon_path+'Play.png')
+    rect_next = btn_next.get_rect(centerx=rect.centerx+80, centery=rect.centery+120)
+    screen.blit(menu, rect)
+    screen.blit(btn_home, rect_home)
+    screen.blit(btn_replay, rect_replay)
+    screen.blit(btn_next, rect_next)
+    # label
+    label1 = controls.Label(c.font_text_path, "Score:", size=20, color=c.TITLE_COLOR, location_topleft=(rect.centerx-50,rect.centery-140))
+    label1.text_rect.centerx = rect.centerx
+    label1.draw(screen)
+
+    label = controls.Label(c.font_text_path, str(score), size=50, color='white', location_topleft=(rect.centerx-100,rect.centery-100))
+    label.text_rect.centerx = rect.centerx
+    label.draw(screen)
+    controls.Label(c.font_title_path, "Move: "+str(move), size=25, color=c.TITLE_COLOR, location_topleft=(rect.centerx-100,rect.centery-20)).draw(screen)
+    controls.Label(c.font_title_path, "Time: "+str(time//60)+":"+str(time%60), size=25, color=c.TITLE_COLOR, location_topleft=(rect.centerx-100,rect.centery+40)).draw(screen)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:     
+                if rect_home.collidepoint(event.pos):
+                    result = 0 # back to home (select map)
+                if rect_replay.collidepoint(event.pos):
+                    result = 1 # replay
+                if rect_next.collidepoint(event.pos):
+                    result = 2 # next
+        if result >= 0:
+            return result   
+        pygame.display.update()
+        
+    
 
 def move_event(direct):
     keyboard.press(direct)
