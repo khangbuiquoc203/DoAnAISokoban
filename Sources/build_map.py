@@ -41,6 +41,7 @@ box = pygame.image.load(os.getcwd() + '\\box.png')
 point = pygame.image.load(os.getcwd() + '\\point.png')
 space = pygame.image.load(os.getcwd() + '\\space.png')
 init_background = pygame.image.load(os.getcwd() + '\\init_background.png')
+icon_image  = pygame.image.load(os.getcwd() + '\\icon_image.png')
 
 text_font=pygame.font.Font(os.getcwd() + '\\game.ttf',45)
 textsmall_font=pygame.font.Font(os.getcwd() + '\\game.ttf',30)
@@ -272,8 +273,11 @@ def sokoban(screen, stage):
     stateLenght = 0
     AI_solving = False
     currentState = 0
+    
+    
     while running:     
         screen.blit(init_background, (0, 0))
+        pygame.display.set_icon(icon_image)
         
         for i in control_info:
             i.draw(screen)
@@ -317,7 +321,20 @@ def sokoban(screen, stage):
      
         if len(list_board) > 0 and AI_solving == True:
             clock.tick(3)
+            nowpos = spf.find_position_player(new_board)
+            nextpos = spf.find_position_player(list_board[0][currentState])
+            direct = spf.check_movement_direction(nowpos,nextpos)
             new_board = list_board[0][currentState]
+            if direct == 'w':
+                player = pygame.image.load(assets_path + '\\playerup.png')
+            if direct == 's':
+                player = pygame.image.load(assets_path + '\\playerdown.png')
+            if direct == 'a':
+                player = pygame.image.load(assets_path + '\\playerleft.png')
+            if direct == 'd':
+                player = pygame.image.load(assets_path + '\\playerright.png')
+            sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
+            sound.play()
             currentState = currentState + 1
             moved = True
             if currentState == stateLenght:
@@ -363,6 +380,7 @@ def sokoban(screen, stage):
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage]) 
+                    player = pygame.image.load(assets_path + '\\playerup.png')
                     sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
                     sound.play()
                     moved = True
@@ -370,6 +388,7 @@ def sokoban(screen, stage):
                     backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])
                     sound = pygame.mixer.Sound(assets_path + '\\movesound.wav')
+                    player = pygame.image.load(assets_path + '\\playerdown.png')
                     sound.play()
                     moved = True
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
@@ -387,6 +406,11 @@ def sokoban(screen, stage):
                     sound.play()
                     moved = True
                 if event.key == pygame.K_RETURN and spf.check_win(new_board, list_check_points[stage]):
+                    if stage == 29:
+                        drawBoard(maps[stage])
+                        new_board = maps[stage]
+                        playsound = False
+                        moved == False
                     drawBoard(maps[stage+1])
                     new_board = maps[stage+1]
                     stage+=1
@@ -396,7 +420,7 @@ def sokoban(screen, stage):
                 pygame.quit()
                 sys.exit()
         if spf.check_win(new_board, list_check_points[stage]):
-            draw_text("Press enter to continue!", textsmall_font, (255, 255, 255), 150, 350)
+            draw_text("Press enter to continue!", textsmall_font, (255, 255, 255), 650, 400)
             if playsound == False:
                 sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
                 sound.play()
