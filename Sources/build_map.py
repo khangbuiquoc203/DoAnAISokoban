@@ -1,4 +1,5 @@
 import numpy as np
+import User
 import os
 import pygame
 import re
@@ -253,7 +254,7 @@ class enum_of_control_game(Enum):
 //      SOKOBAN FUNCTION     //
 //===========================//
 '''
-def sokoban(screen, stage):
+def sokoban(screen, stage, user):
     control_game = [] #0: algorithm, 1: play, 2: pause, 3: home, 4: replay, 5: undo, 6: sound
     control_info = []
     create_control_game(control_game, control_info)
@@ -274,7 +275,7 @@ def sokoban(screen, stage):
     AI_solving = False
     currentState = 0
     
-    
+    temp = False
     while running:     
         screen.blit(init_background, (0, 0))
         pygame.display.set_icon(icon_image)
@@ -295,6 +296,7 @@ def sokoban(screen, stage):
         #draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
         #draw_text("Solve step: " + str(stateLenght), textsmall_font, (255, 255, 255), 700, 50)
         if control_game[1].is_clicked():
+            pygame.mixer.Sound(c.click_sound_path).play()
             print('SOLVE')
             if algorithm == "BFS": 
                 list_board = agr.BFS(maps[stage], list_check_points[stage])
@@ -341,6 +343,7 @@ def sokoban(screen, stage):
                 AI_solving = False   
         
         if control_game[enum_of_control_game.ALGORITHM.value].is_clicked():
+            pygame.mixer.Sound(c.click_sound_path).play()
             algorithm_number +=1
             if algorithm_number == (len(algorithm_list)):
                 algorithm_number = 0
@@ -354,16 +357,19 @@ def sokoban(screen, stage):
             control_game[0].text_rect = rect
             
         if control_game[enum_of_control_game.HOME.value].is_clicked():
+            pygame.mixer.Sound(c.click_sound_path).play()
             running = False 
             
         if control_game[enum_of_control_game.REPLAY.value].is_clicked():
-             print('REPLAY')
-             drawBoard(maps[stage])
-             new_board = maps[stage]
-             playsound = False
-             moved == False
+            pygame.mixer.Sound(c.click_sound_path).play()
+            print('REPLAY')
+            drawBoard(maps[stage])
+            new_board = maps[stage]
+            playsound = False
+            moved == False
              
         if control_game[enum_of_control_game.UNDO.value].is_clicked():
+            pygame.mixer.Sound(c.click_sound_path).play()
             new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
             moved = True
         
@@ -419,12 +425,20 @@ def sokoban(screen, stage):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+                
         if spf.check_win(new_board, list_check_points[stage]):
+            temp = True
+            user.score[stage] = 10
+            if stage != 29:
+                user.score[stage+1] = 0
             draw_text("Press enter to continue!", textsmall_font, (255, 255, 255), 650, 400)
             if playsound == False:
                 sound = pygame.mixer.Sound(assets_path + '\\winsound.mp3')
                 sound.play()
                 playsound = True
+        if temp:
+            User.update_user(user)
+            temp = False
         pygame.display.update()
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
 

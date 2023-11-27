@@ -64,3 +64,4 @@ MAP_EACH_LEVEL = 15
 png_path = os.getcwd() + '\\..\\Assets\\png\\'
 login_path = os.getcwd() + '\\..\\Assets\\login\\'
 assets_path = os.getcwd() + '\\..\\Assets\\'
+click_sound_path = os.getcwd() + '\\..\\Assets\\clicksound.wav'

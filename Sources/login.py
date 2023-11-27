@@ -155,6 +155,7 @@ def login(screen):
                 if textbox_username.collidepoint(event.pos):
                     active = textbox_username
                 elif buttons[0][1].collidepoint(event.pos):
+                    pygame.mixer.Sound(c.click_sound_path).play()
                     if User.get_user(username) == None:
                         continue
                     else:
@@ -202,6 +203,13 @@ def game(screen):
         draw_title(screen, 'SOKOBAN')
         draw_welcome(screen, 'WELCOME '+user.username)
         
+        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại     
+        set_hover_button(buttons, hover)
+        
+        # draw button
+        for i in buttons:
+            screen.blit(i[0], i[1]) # blit button
+            screen.blit(i[2], i[3]) # blit text
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -213,7 +221,8 @@ def game(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:    
+                pygame.mixer.Sound(c.click_sound_path).play()           
                 if hover == 0:
                     play(screen)
                     hover = -1
@@ -226,13 +235,6 @@ def game(screen):
                 elif hover == 3:
                     quit()
                
-        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại     
-        set_hover_button(buttons, hover)
-        
-        # draw button
-        for i in buttons:
-            screen.blit(i[0], i[1]) # blit button
-            screen.blit(i[2], i[3]) # blit text
                 
         pygame.display.update()
 
@@ -249,6 +251,13 @@ def play(screen):
         draw_title(screen, 'SOKOBAN')
         draw_welcome(screen, 'WELCOME '+user.username)
         
+        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
+        set_hover_button(buttons, hover)
+        
+        # draw button
+        for i in buttons:
+            screen.blit(i[0], i[1]) # blit button
+            screen.blit(i[2], i[3]) # blit text
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -260,7 +269,8 @@ def play(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  
+                pygame.mixer.Sound(c.click_sound_path).play()             
                 if hover == 0:
                     player_1(screen)
                     hover = -1
@@ -273,13 +283,6 @@ def play(screen):
                 elif hover == 3:
                     running = False
         
-        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
-        set_hover_button(buttons, hover)
-        
-        # draw button
-        for i in buttons:
-            screen.blit(i[0], i[1]) # blit button
-            screen.blit(i[2], i[3]) # blit text
                 
         pygame.display.update()
 
@@ -305,6 +308,13 @@ def player_1(screen):
         draw_title(screen, 'SOKOBAN')
         draw_welcome(screen, 'WELCOME '+user.username)
         
+        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
+        set_hover_button(buttons, hover)
+        
+        # draw button
+        for i in buttons:
+            screen.blit(i[0], i[1]) # blit button
+            screen.blit(i[2], i[3]) # blit text
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -316,7 +326,8 @@ def player_1(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:    
+                pygame.mixer.Sound(c.click_sound_path).play()           
                 if hover == 0:
                     map(screen, level=0)
                     hover = -1
@@ -329,13 +340,6 @@ def player_1(screen):
                 elif hover == 3:
                     running = False
         
-        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
-        set_hover_button(buttons, hover)
-        
-        # draw button
-        for i in buttons:
-            screen.blit(i[0], i[1]) # blit button
-            screen.blit(i[2], i[3]) # blit text
         
         pygame.display.update()
     
@@ -351,6 +355,13 @@ def player_2(screen):
         draw_title(screen, 'SOKOBAN')
         draw_welcome(screen, 'WELCOME '+user.username)
        
+        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
+        set_hover_button(buttons, hover)
+        
+        # draw button
+        for i in buttons:
+            screen.blit(i[0], i[1]) # blit button
+            screen.blit(i[2], i[3]) # blit text
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -362,7 +373,8 @@ def player_2(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:        
+                pygame.mixer.Sound(c.click_sound_path).play()       
                 if hover == 0:
                     map(screen, level=0)
                     hover = -1
@@ -375,13 +387,6 @@ def player_2(screen):
                 elif hover == 3:
                     running = False
         
-        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
-        set_hover_button(buttons, hover)
-        
-        # draw button
-        for i in buttons:
-            screen.blit(i[0], i[1]) # blit button
-            screen.blit(i[2], i[3]) # blit text
         
         pygame.display.update()
     
@@ -397,6 +402,13 @@ def AI(screen):
         draw_title(screen, 'SOKOBAN')
         draw_welcome(screen, 'WELCOME '+user.username)
        
+        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
+        set_hover_button(buttons, hover)
+        
+        # draw button
+        for i in buttons:
+            screen.blit(i[0], i[1]) # blit button
+            screen.blit(i[2], i[3]) # blit text
         # event
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -408,7 +420,8 @@ def AI(screen):
                         hover = i
                         break
                     hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:        
+                pygame.mixer.Sound(c.click_sound_path).play()       
                 if hover == 0:
                     map(screen, level=0)
                     hover = -1
@@ -421,13 +434,6 @@ def AI(screen):
                 elif hover == 3:
                     running = False
         
-        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
-        set_hover_button(buttons, hover)
-        
-        # draw button
-        for i in buttons:
-            screen.blit(i[0], i[1]) # blit button
-            screen.blit(i[2], i[3]) # blit text
         
         pygame.display.update()
 
@@ -445,6 +451,11 @@ def map(screen, level):
     while running:
         draw_background(screen)
         draw_title(screen, 'MAP')
+        create_buttons_map(buttons, quantity, level, user.score)
+        # draw button
+        for i in buttons:
+            screen.blit(i[0], i[1]) # blit button
+            screen.blit(i[2], i[3]) # blit text
         
         screen.blit(back, back_rect)
         # event
@@ -459,18 +470,15 @@ def map(screen, level):
                         break
                     hover = -1
 
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:               
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:     
+                pygame.mixer.Sound(c.click_sound_path).play()          
                 if hover != -1 and int(user.score[level*10 + hover]) != -1:
-                    sokoban(screen, buttons[hover][4])
+                    sokoban(screen, buttons[hover][4], user)
                     hover = -1 # đặt lại hover mỗi lần load map
                 if back_rect.collidepoint(event.pos):
                     running = False
         
         
         
-        # draw button
-        for i in buttons:
-            screen.blit(i[0], i[1]) # blit button
-            screen.blit(i[2], i[3]) # blit text
                 
         pygame.display.update()

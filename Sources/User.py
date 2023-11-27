@@ -56,5 +56,33 @@ def get_user(username):
             return i
     return None
 
-def update_user(user):
-    return None
+def update_user(user_object):
+    # lấy user từ detai.txt
+    users_list = []
+    with open(c.login_path+'detail.txt', 'r') as file:
+        user_data = file.read().split('\n') 
+        for data in user_data:
+            if data == '':
+                continue
+            user_info = data.split(';')
+            name = user_info[0]
+            level = []
+            score = []
+            for i in range(1, 31):
+                temp = user_info[i].split(',')
+                level.append(temp[0])
+                score.append(temp[1])
+            users_list.append(user(name, level, score))
+    # cập nhập lại dữ liệu        
+    for i in range(len(users_list)):
+        if users_list[i].username == user_object.username:
+            users_list[i] = user_object
+            break
+    # write user vào detail.txt
+    with open(c.login_path+'detail.txt', 'w') as file:
+        for i in users_list:
+            string = i.username+';'
+            for temp in range(30):
+                string += str(i.level[temp])+','+str(i.score[temp])+';'
+            string += '\n'
+            file.write(string)
