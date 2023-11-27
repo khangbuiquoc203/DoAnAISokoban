@@ -13,7 +13,7 @@ BOARD_LOCATION_Y = (SCREEN_HEIGHT-BOARD_SIZE)//2 + 40
 font_title_path = os.getcwd() + '\\..\\Assets\\font\\title_font.ttf'
 TITLE_BASE_X = SCREEN_WIDTH//2
 TITLE_BASE_Y = 100
-TITLE_COLOR = '#30b163'
+TITLE_COLOR = '#FDD250'
 TITLE_SIZE = 120
 
 # text
