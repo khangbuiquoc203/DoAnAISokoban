@@ -319,10 +319,9 @@ def sokoban(screen, stage, user):
             clock.tick(5)
             new_list_board = list_board[0][1:]
             nowpos = spf.find_position_player(new_board)
-            print(currentState)
-            print(len(new_list_board))
-            nextpos = spf.find_position_player(new_list_board[currentState-1])
+            nextpos = spf.find_position_player(new_list_board[currentState])
             direct = spf.check_movement_direction(nowpos,nextpos)
+            print(direct)
             new_board = new_list_board[currentState]
             if direct == 'w':
                 player = pygame.image.load(assets_path + '\\playerup.png')
@@ -391,6 +390,7 @@ def sokoban(screen, stage, user):
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     backward_matrix = new_board
                     new_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])
+                    player = pygame.image.load(assets_path + '\\playerdown.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
                     moved = True
                     move_count += 1
@@ -450,7 +450,7 @@ def menu(screen, user, stage, score, time, move):
         user.score[stage+1] = 0
     User.update_user(user)
     result = -1
-    menu = pygame.image.load('E:\\LapTrinh\\Python\\DoAnAISokoban\\Assets\\png\\menu.png')
+    menu = pygame.image.load(assets_path+'\\png\\menu.png')
     rect = menu.get_rect(center=(c.SCREEN_WIDTH//2,c.SCREEN_HEIGHT//2))
     # button
     btn_home = pygame.image.load(c.icon_path+'Home.png')

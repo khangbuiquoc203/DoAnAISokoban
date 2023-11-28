@@ -42,7 +42,7 @@ def draw_title(screen, text):
 
 def draw_welcome(screen, text):
     font_title = pygame.font.Font(c.font_title_path, 40)
-    title = font_title.render(text, True, 'red')
+    title = font_title.render(text, True, '#f4c12a')
     text_rect = title.get_rect()
     text_rect.center = (c.TITLE_BASE_X, c.TITLE_BASE_Y+90)
     screen.blit(title, text_rect)
