@@ -446,7 +446,7 @@ def sokoban(screen, stage, user):
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
         if spf.check_win(new_board, list_check_points[stage]):
-            select_in_menu = menu(screen, user, stage, 1000-move_count*seconds, seconds, move_count)
+            select_in_menu = menu(screen, user, stage, 1000-move_count*seconds, seconds, move_count-1)
             start_time = pygame.time.get_ticks()
             move_count = 0
             if select_in_menu == 0:
