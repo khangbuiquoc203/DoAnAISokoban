@@ -446,6 +446,57 @@ def BEAM(board, list_check_point, beam_width):
     
     print("Not Found")
     return []    
-  
+
+def HILL(board, list_check_point): 
+    start_time = time.time()
+    start_state = spf.state(board, None, 0, list_check_point, "HILL")
+    list_state = [start_state]
+    
+    global num_states_visited
+    num_states_visited = 0
+    
+    while True:
+        now_state = list_state[-1]
+        cur_pos = spf.find_position_player(now_state.board)
+    
+        list_can_move = spf.get_next_pos(now_state.board, cur_pos)
+        num_shuffles = 23
+
+        for _ in range(num_shuffles):
+            random.shuffle(list_can_move)
+        best_heuristic_value = float('-inf')
+        best_next_state = None
+        
+        for next_pos in list_can_move:
+            new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
+            num_states_visited += 1
+            if spf.is_board_exist(new_board, list_state):
+                continue
+            if spf.is_board_can_not_win(new_board, list_check_point):
+                continue
+            if spf.is_all_boxes_stuck(new_board, list_check_point):
+                continue
+    
+            new_state = spf.state(new_board, now_state, now_state.cost, list_check_point, "HILL")
+            heuristic_value = new_state.h()
+            
+            if heuristic_value > best_heuristic_value:
+                best_heuristic_value = heuristic_value
+                best_next_state = new_state
+        
+        if best_next_state is None:
+            print("Not Found")
+            return []
+        
+        if spf.check_win(best_next_state.board, list_check_point):
+            print("Found win")
+            return (best_next_state.get_line(), len(list_state))
+    
+        list_state.append(best_next_state)
+        
+        end_time = time.time()
+        if end_time - start_time > spf.TIME_OUT:
+            return []
+
 def number_states_visited():
     return num_states_visited  
