@@ -83,7 +83,10 @@ def compare_matrix(board_A, board_B):
 
 ''' CHECK WHETHER THE BOARD IS GOAL OR NOT '''
 def check_win(board, list_check_point):
-    return all(board[p[0]][p[1]] == '$' for p in list_check_point)
+    try:   
+        return all(board[p[0]][p[1]] == '$' for p in list_check_point)
+    except:
+        return None
 
 
 ''' CHECK WHETHER A SINGLE BOX IS ON A CHECKPOINT '''

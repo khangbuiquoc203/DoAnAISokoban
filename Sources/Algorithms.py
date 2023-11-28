@@ -390,7 +390,62 @@ def depth_limited_DFS(board, list_check_point, max_depth):
     print("Not Found")
     return []
   
+def BEAM(board, list_check_point, beam_width): 
+    start_time = time.time() 
+    start_state = spf.state(board, None, 0, list_check_point, "BEAM") 
+    list_state = [start_state]
     
+    heuristic_queue = PriorityQueue()
+    heuristic_queue.put(start_state)
+    
+    global num_states_visited
+    num_states_visited = 0
+    
+    while not heuristic_queue.empty():
+        # Get the top beam_width states from the queue
+        beam_states = []
+        for _ in range(beam_width):
+            if heuristic_queue.empty():
+                break
+            beam_states.append(heuristic_queue.get())
+        
+        # Expand each state in the beam and add the successors to the queue
+        for now_state in beam_states:
+            cur_pos = spf.find_position_player(now_state.board)
+    
+            list_can_move = spf.get_next_pos(now_state.board, cur_pos)
+            num_shuffles = 23
+    
+            for _ in range(num_shuffles):
+                random.shuffle(list_can_move)
+            for next_pos in list_can_move:
+                new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
+                num_states_visited += 1
+                if spf.is_board_exist(new_board, list_state):
+                    continue
+                if spf.is_board_can_not_win(new_board, list_check_point):
+                    continue
+                if spf.is_all_boxes_stuck(new_board, list_check_point):
+                    continue
+    
+                new_state = spf.state(new_board, now_state, now_state.cost, list_check_point, "BEAM")
+            
+                if spf.check_win(new_board, list_check_point):
+                    print("Found win")
+                    return (new_state.get_line(), len(list_state))
+    
+                list_state.append(new_state)
+                heuristic_queue.put(new_state)
+    
+                end_time = time.time()
+                if end_time - start_time > spf.TIME_OUT:
+                    return []
+            end_time = time.time()
+            if end_time - start_time > spf.TIME_OUT:
+                return []
+    
+    print("Not Found")
+    return []    
   
 def number_states_visited():
     return num_states_visited  
