@@ -127,7 +127,7 @@ def get_board(path):
     result = np.loadtxt(f"{path}", dtype=str, delimiter=',')
     for row in result:
         format_row(row)
-    return result
+    return result.tolist()
 
 '''
 //===========================//
@@ -154,30 +154,33 @@ Height phụ thuộc vào box đã đc tính
 '''
 # Draw board
 def drawBoard(board):
-    width = len(board[0])  
-    height = len(board)   
-    # kích thước cố định của board là 600px, lấy size này chia cho số box sẽ ra size của mỗi box
-    tile_size = c.BOARD_SIZE//width 
+    try:
+        width = len(board[0])  
+        height = len(board)   
+        # kích thước cố định của board là 600px, lấy size này chia cho số box sẽ ra size của mỗi box
+        tile_size = c.BOARD_SIZE//width 
 
-    # resize image
-    resize_space = pygame.transform.scale(space, (tile_size, tile_size))
-    resize_wall = pygame.transform.scale(wall, (tile_size, tile_size))
-    resize_box = pygame.transform.scale(box, (tile_size, tile_size))
-    resize_point = pygame.transform.scale(point, (tile_size, tile_size))
-    resize_player = pygame.transform.scale(player, (tile_size, tile_size))
+        # resize image
+        resize_space = pygame.transform.scale(space, (tile_size, tile_size))
+        resize_wall = pygame.transform.scale(wall, (tile_size, tile_size))
+        resize_box = pygame.transform.scale(box, (tile_size, tile_size))
+        resize_point = pygame.transform.scale(point, (tile_size, tile_size))
+        resize_player = pygame.transform.scale(player, (tile_size, tile_size))
 
-    # draw board
-    for i in range(height):
-        for j in range(width):
-            screen.blit(resize_space, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
-            if board[i][j] == '#':
-                screen.blit(resize_wall, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
-            if board[i][j] == '$':
-                screen.blit(resize_box, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
-            if board[i][j] == '%':
-                screen.blit(resize_point, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
-            if board[i][j] == '@':
-                screen.blit(resize_player, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
+        # draw board
+        for i in range(height):
+            for j in range(width):
+                screen.blit(resize_space, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
+                if board[i][j] == '#':
+                    screen.blit(resize_wall, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
+                if board[i][j] == '$':
+                    screen.blit(resize_box, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
+                if board[i][j] == '%':
+                    screen.blit(resize_point, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
+                if board[i][j] == '@':
+                    screen.blit(resize_player, (j * tile_size + c.BOARD_LOCATION_X, i * tile_size + c.BOARD_LOCATION_Y))
+    except:
+        return
 
 ''' VARIABLE '''
 algorithm = algorithm_list[0]
@@ -289,6 +292,7 @@ def sokoban(screen, stage, user):
         #draw_text("Solve step: " + str(stateLenght), textsmall_font, (255, 255, 255), 700, 50)
         if control_game[1].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
+            start_time = pygame.time.get_ticks()
             print('SOLVE')
             if algorithm == "BFS": 
                 list_board = agr.BFS(maps[stage], list_check_points[stage])
@@ -314,32 +318,35 @@ def sokoban(screen, stage, user):
             if algorithm == "BEAM": 
                 list_board = agr.BEAM(maps[stage], list_check_points[stage], 1)
                 num_states_visited = agr.number_states_visited()
-		stateLenght = len(list_board[0]) if list_board != [] else 0
+                stateLenght = len(list_board[0]) if list_board != [] else 0
             AI_solving= True
             currentState = 0
+            # Handle time
+            current_time = pygame.time.get_ticks()
+            print("Thời gian AI xử lí: "+str(current_time-start_time))
+            start_time = pygame.time.get_ticks()
      
         if len(list_board) > 0 and AI_solving == True:
             clock.tick(5)
             new_list_board = list_board[0][1:]
-            nowpos = spf.find_position_player(new_board)
-            nextpos = spf.find_position_player(new_list_board[currentState])
-            direct = spf.check_movement_direction(nowpos,nextpos)
-            print(direct)
-            new_board = new_list_board[currentState]
-            if direct == 'w':
-                player = pygame.image.load(assets_path + '\\playerup.png')
-            if direct == 's':
-                player = pygame.image.load(assets_path + '\\playerdown.png')
-            if direct == 'a':
-                player = pygame.image.load(assets_path + '\\playerleft.png')
-            if direct == 'd':
-                player = pygame.image.load(assets_path + '\\playerright.png')
-            pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-            move_count += 1
-            currentState = currentState + 1
-            moved = True
-            if currentState == stateLenght-1:
-                AI_solving = False   
+            if currentState < len(new_list_board):
+                nowpos = spf.find_position_player(new_board)
+                nextpos = spf.find_position_player(new_list_board[currentState])
+                direct = spf.check_movement_direction(nowpos,nextpos)
+                print(direct)
+                new_board = new_list_board[currentState]
+                if direct == 'w':
+                    player = pygame.image.load(assets_path + '\\playerup.png')
+                if direct == 's':
+                    player = pygame.image.load(assets_path + '\\playerdown.png')
+                if direct == 'a':
+                    player = pygame.image.load(assets_path + '\\playerleft.png')
+                if direct == 'd':
+                    player = pygame.image.load(assets_path + '\\playerright.png')
+                pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
+                move_count += 1
+                currentState = currentState + 1
+                moved = True
         
         if control_game[enum_of_control_game.ALGORITHM.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
@@ -368,49 +375,64 @@ def sokoban(screen, stage, user):
              
         if control_game[enum_of_control_game.UNDO.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
-            new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
-            moved = True
-            move_count -= 1
+            temp_board = load_matrix_from_txt(backward_path + '\\backward.txt')
+            if move_count > 0 and new_board != temp_board:
+                new_board = temp_board
+                moved = True
+                move_count -= 1
         
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
-                    new_board = load_matrix_from_txt(backward_path + '\\backward.txt')
-                    moved = True
-                    move_count -= 1
+                    pygame.mixer.Sound(c.click_sound_path).play()
+                    temp_board = load_matrix_from_txt(backward_path + '\\backward.txt')
+                    if move_count > 0 and new_board != temp_board:
+                        new_board = temp_board
+                        moved = True
+                        move_count -= 1
                 if event.key == pygame.K_SPACE:
+                    pygame.mixer.Sound(c.click_sound_path).play()
                     drawBoard(maps[stage])
                     new_board = maps[stage]
                     moved == False
                     move_count = 0
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     backward_matrix = new_board
-                    new_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage]) 
+                    temp_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage])  
+                    if new_board != temp_board:
+                        new_board = temp_board
+                        moved = True
+                        move_count += 1  
                     player = pygame.image.load(assets_path + '\\playerup.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-                    moved = True
-                    move_count += 1
+
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     backward_matrix = new_board
-                    new_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])
+                    temp_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])  
+                    if new_board != temp_board:
+                        new_board = temp_board
+                        moved = True
+                        move_count += 1  
                     player = pygame.image.load(assets_path + '\\playerdown.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-                    moved = True
-                    move_count += 1
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     backward_matrix = new_board
-                    new_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])
+                    temp_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])  
+                    if new_board != temp_board:
+                        new_board = temp_board
+                        moved = True
+                        move_count += 1  
                     player = pygame.image.load(assets_path + '\\playerleft.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-                    moved = True
-                    move_count += 1
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     backward_matrix = new_board
-                    new_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])
+                    temp_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])  
+                    if new_board != temp_board:
+                        new_board = temp_board
+                        moved = True
+                        move_count += 1  
                     player = pygame.image.load(assets_path + '\\playerright.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-                    moved = True
-                    move_count += 1
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -523,22 +545,6 @@ def load_matrix_from_txt(file_path):
 def Mbox(title, text, style):
     ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
-def display(stage):
-    # Vẽ các text border
-    pygame.draw.rect(screen, (255, 255, 255), (930,200,150,40), width=3, border_bottom_left_radius=5, border_bottom_right_radius=5, border_top_left_radius=5, border_top_right_radius=5)
-    pygame.draw.rect(screen, (255, 255, 255), (930,500,200,40), width=3, border_bottom_left_radius=5, border_bottom_right_radius=5, border_top_left_radius=5, border_top_right_radius=5)
-    draw_text("Sokoban Game", text_font, (255, 255, 255), 800, 80)
-    draw_text("Score: ", textsmall_font, (255, 255, 255), 100, 15)
-    draw_text("Time: ", textsmall_font, (255, 255, 255), 400, 15)
-
-    mapText = textsmall_font.render("Lv. " + str(stage+1), True, WHITE)
-    mapRect = mapText.get_rect(center=(955, 280))
-    screen.blit(mapText, mapRect)
-
- 
-    algorithmText = textsmall_font.render(str(algorithm), True, WHITE)
-    algorithmRect = algorithmText.get_rect(center=(1025, 520))
-    screen.blit(algorithmText, algorithmRect)
 
 '''
 //========================//
