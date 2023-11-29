@@ -343,8 +343,9 @@ Wishing you fun and challenging times!"""
             if algorithm == "HILL": 
                 list_board = agr.HILL(maps[stage], list_check_points[stage])
                 num_states_visited = agr.number_states_visited()
-            print("Số trạng thái đã duyệt: ",list_board[1])
+            
             stateLenght = len(list_board[0]) if list_board != [] else 0
+            
             AI_solving= True
             currentState = 0
             # Handle time
@@ -353,8 +354,18 @@ Wishing you fun and challenging times!"""
             hour = current_time_chat.hour
             minute = current_time_chat.minute
             second = current_time_chat.second
+            
+            if list_board == []:
+                print("CÁI NÀY TÌM KHÔNG CÓ RA")
+                list_board.append(0)  # Thêm một phần tử để có ít nhất 1 phần tử trong danh sách
+                list_board.append(num_states_visited)
+                AI_solving = False
+                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms "+"NOT FOUND!!!")
+            else:
+                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms")
+            print("Số trạng thái đã duyệt: ",list_board[1])
             print("Thời gian AI xử lí: "+str(current_time-start_time))
-            message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms")
+            
             start_time = pygame.time.get_ticks()
             listdirect = []
             
