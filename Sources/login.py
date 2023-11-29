@@ -1,10 +1,10 @@
 import User
+import build_map_2player
 import pygame
 from pygame.locals import *
 import sys
 import const as c
 from build_map import *
-import build_map_2player
 import random
 
 def init():

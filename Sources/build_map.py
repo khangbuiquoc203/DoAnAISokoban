@@ -410,6 +410,7 @@ Wishing you fun and challenging times!"""
             new_board = maps[stage]
             moved == False
             move_count = 0
+            start_time=pygame.time.getticks()
              
         if control_game[enum_of_control_game.UNDO.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
@@ -482,7 +483,8 @@ Wishing you fun and challenging times!"""
             drawBoard(new_board)
                     
         pygame.display.update()
-        save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
+        if backward_matrix !=new_board:
+            save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
         if spf.check_win(new_board, list_check_points[stage]):
             print(listdirect)
