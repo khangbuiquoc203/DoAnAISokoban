@@ -120,7 +120,7 @@ def set_hover_button_map(buttons, hover):
 # LOGIN: return 0: none, 1: quit, 2: success
 def login(screen):
     active = None
-    username = "q"
+    username = ""
     buttons = []
     create_buttons(buttons, 1, ['OK'])
     hover = -1

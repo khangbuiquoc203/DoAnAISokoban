@@ -353,6 +353,9 @@ def sokoban(screen, stage, user):
                 move_count += 1
                 currentState = currentState + 1
                 moved = True
+            else:
+                AI_solving = False
+                clock.tick(120)
         
         if control_game[enum_of_control_game.ALGORITHM.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
@@ -378,6 +381,7 @@ def sokoban(screen, stage, user):
             new_board = maps[stage]
             moved == False
             move_count = 0
+            start_time = pygame.time.get_ticks()
              
         if control_game[enum_of_control_game.UNDO.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
@@ -449,7 +453,8 @@ def sokoban(screen, stage, user):
         else:
             drawBoard(new_board)
         pygame.display.update()
-        save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
+        if backward_matrix != new_board:
+            save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
         if spf.check_win(new_board, list_check_points[stage]):
             print(listdirect)

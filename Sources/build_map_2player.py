@@ -90,9 +90,11 @@ def sokoban_2_player(screen, stage_list):
             is_pause = False
             
         if control_game[enum_of_control_game.SOUND.value].is_clicked():
+            pygame.mixer.Sound(c.click_sound_path).play()
             print("sound")
             
         if control_game[enum_of_control_game.HOME.value].is_clicked():
+            pygame.mixer.Sound(c.click_sound_path).play()
             running = False
             
         for event in pygame.event.get():
