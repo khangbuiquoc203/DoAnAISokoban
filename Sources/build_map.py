@@ -321,7 +321,7 @@ def sokoban(screen, stage, user):
             if algorithm == "HILL": 
                 list_board = agr.HILL(maps[stage], list_check_points[stage])
                 num_states_visited = agr.number_states_visited()
-            print("Số trạng thái đã duyệt: ",num_states_visited)
+            print("Số trạng thái đã duyệt: ",list_board[1])
             stateLenght = len(list_board[0]) if list_board != [] else 0
             AI_solving= True
             currentState = 0
