@@ -4,6 +4,8 @@ from pygame.locals import *
 import sys
 import const as c
 from build_map import *
+import build_map_2player
+import random
 
 def init():
     pygame.init()
@@ -354,54 +356,10 @@ def player_1(screen):
         pygame.display.update()
     
 def player_2(screen):
-    # danh sách 4 button, mỗi button chứa [picture, picture_rect, text, text_rect]
-    buttons = []
-    create_buttons(buttons, 4, ['EASY', 'MEDIUM', 'HARD', 'BACK'])
-    
-    hover = -1
-    running = True
-    while running:
-        draw_background(screen)
-        draw_title(screen, 'SOKOBAN')
-        draw_welcome(screen, 'WELCOME '+user.username)
-       
-        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
-        set_hover_button(buttons, hover)
-        
-        # draw button
-        for i in buttons:
-            screen.blit(i[0], i[1]) # blit button
-            screen.blit(i[2], i[3]) # blit text
-        # event
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                quit()
-            if event.type == MOUSEMOTION:
-                for i in range(4):
-                    # buttons: list of [picture, picture_rect, text, text_rect]
-                    if buttons[i][1].collidepoint(event.pos):
-                        hover = i
-                        break
-                    hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:    
-                if hover == 0:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    map(screen, level=0)
-                    hover = -1
-                elif hover == 1:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    map(screen, level=1)
-                    hover = -1
-                elif hover == 2:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    map(screen, level=2)
-                    hover = -1
-                elif hover == 3:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    running = False
-        
-        
-        pygame.display.update()
+    stage_list  = list(range(30))
+    random.shuffle(stage_list)
+
+    build_map_2player.sokoban_2_player(screen, stage_list)
     
 def AI(screen):
     # danh sách 4 button, mỗi button chứa [picture, picture_rect, text, text_rect]
