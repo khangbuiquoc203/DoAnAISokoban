@@ -252,6 +252,7 @@ def sokoban(screen, stage, user):
     global list_board
     global algorithm_number
     global num_states_visited
+    listdirect=[]
     pygame.font.init()
     clock = pygame.time.Clock()
     moved = False
@@ -329,6 +330,7 @@ def sokoban(screen, stage, user):
             current_time = pygame.time.get_ticks()
             print("Thời gian AI xử lí: "+str(current_time-start_time))
             start_time = pygame.time.get_ticks()
+            listdirect = []
      
         if len(list_board) > 0 and AI_solving == True:
             clock.tick(5)
@@ -337,7 +339,7 @@ def sokoban(screen, stage, user):
                 nowpos = spf.find_position_player(new_board)
                 nextpos = spf.find_position_player(new_list_board[currentState])
                 direct = spf.check_movement_direction(nowpos,nextpos)
-                print(direct)
+                listdirect.append(direct)
                 new_board = new_list_board[currentState]
                 if direct == 'w':
                     player = pygame.image.load(assets_path + '\\playerup.png')
@@ -450,6 +452,7 @@ def sokoban(screen, stage, user):
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
         if spf.check_win(new_board, list_check_points[stage]):
+            print(listdirect)
             select_in_menu = menu(screen, user, stage, 1000-move_count*seconds, seconds, move_count-1)
             start_time = pygame.time.get_ticks()
             move_count = 0
