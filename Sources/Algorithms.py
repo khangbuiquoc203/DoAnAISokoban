@@ -244,10 +244,10 @@ def DFS(board, list_check_point):
         cur_pos = spf.find_position_player(now_state.board)
         
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
-        num_shuffles = 23
+        # num_shuffles = 23
 
-        for _ in range(num_shuffles):
-            random.shuffle(list_can_move)
+        # for _ in range(num_shuffles):
+        #     random.shuffle(list_can_move)
 
         for next_pos in list_can_move:
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
