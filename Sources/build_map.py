@@ -11,6 +11,7 @@ import sys
 import Algorithms as agr
 import keyboard
 from enum import Enum
+from datetime import datetime
 '''
 //========================//
 //         PYGAME         //
@@ -267,6 +268,17 @@ def sokoban(screen, stage, user):
     elapsed_time = 0
     # Move
     move_count = 0
+    
+    font = pygame.font.SysFont(c.font_textchat_path, 16)
+    area = pygame.Rect(60, 220, 400, 360)
+    box = area.inflate(2, 2)
+    pygame.draw.rect(screen, c.BLUE, box, 1)
+    
+    welcomemessage="""Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target locations.
+Wishing you fun and challenging times!"""
+    message = controls.TextScroll(area, font, c.BLACK, c.WHITE, welcomemessage, ms_per_line=500)
+    
     while running:     
         # Draw stage
         control_info[0] = controls.Label(c.font_title_path, "Lv: "+str(stage+1), size=38, color=c.TITLE_COLOR, location_topleft=(60,20))
@@ -286,7 +298,16 @@ def sokoban(screen, stage, user):
             
         for i in control_game:
             i.draw(screen)
-        pygame.draw.rect(screen, 'white', pygame.Rect(60, 220, 400, 360))
+        #pygame.draw.rect(screen, 'white', pygame.Rect(60, 220, 400, 360))
+        
+        
+        
+        # Display the scrolling text
+        message.update()
+        message.draw(screen)
+        
+        
+        
         
         #display(stage)
         #draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
@@ -328,9 +349,15 @@ def sokoban(screen, stage, user):
             currentState = 0
             # Handle time
             current_time = pygame.time.get_ticks()
+            current_time_chat = datetime.now()
+            hour = current_time_chat.hour
+            minute = current_time_chat.minute
+            second = current_time_chat.second
             print("Thời gian AI xử lí: "+str(current_time-start_time))
+            message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms")
             start_time = pygame.time.get_ticks()
             listdirect = []
+            
      
         if len(list_board) > 0 and AI_solving == True:
             clock.tick(5)
@@ -353,6 +380,11 @@ def sokoban(screen, stage, user):
                 move_count += 1
                 currentState = currentState + 1
                 moved = True
+            else:
+                print("CLOCKTICK RESET")
+                list_board=[]
+                AI_solving == False
+                clock.tick(120)
         
         if control_game[enum_of_control_game.ALGORITHM.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
@@ -448,6 +480,7 @@ def sokoban(screen, stage, user):
             new_board = maps[stage]
         else:
             drawBoard(new_board)
+                    
         pygame.display.update()
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
@@ -468,10 +501,11 @@ def sokoban(screen, stage, user):
                     drawBoard(maps[stage])
                     new_board = maps[stage]
                     moved == False
-                drawBoard(maps[stage+1])
-                new_board = maps[stage+1]
-                stage+=1
-                moved = False
+                else:
+                    drawBoard(maps[stage+1])
+                    new_board = maps[stage+1]
+                    stage+=1
+                    moved = False
         
 
 

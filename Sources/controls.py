@@ -1,4 +1,5 @@
 import pygame
+import time
 
 # button class
 class Button():
@@ -45,41 +46,54 @@ class Label():
         surface.blit(self.text, self.text_rect)
 
 # textbox class
-class TextBox:
-    def __init__(self, x, y, width, height, font_size=32):
-        self.width = width
-        self.rect = pygame.Rect(x, y, width, height)
-        self.color_inactive = pygame.Color('lightskyblue3')
-        self.color_active = pygame.Color('dodgerblue2')
-        self.color = self.color_inactive
-        self.text = 'asdasdasdasd'
-        self.font = pygame.font.Font(None, font_size)
-        self.active = False
+class TextScroll:
+    def __init__(self, area, font, fg_color, bk_color, text, ms_per_line=0):
 
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.active = not self.active
-            else:
-                self.active = False
-            self.color = self.color_active if self.active else self.color_inactive
-        if event.type == pygame.KEYDOWN:
-            if self.active:
-                if event.key == pygame.K_RETURN:
-                    print(self.text)
-                    self.text = ''
-                elif event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                else:
-                    self.text += event.unicode
+        super().__init__()
+        self.rect = area.copy()
+        self.fg_color = fg_color
+        self.bk_color = bk_color
+        self.size = area.size
+        self.surface = pygame.Surface(self.size, flags=pygame.SRCALPHA)
+        self.surface.fill(bk_color)
+        self.font = font
+        self.lines = text.split('\n')
+        self.ms_per_line = ms_per_line
+        self.y = 0
+        self.y_delta = self.font.size("M")[1]
+        self.next_time = None
+        self.dirty = False
 
+    def _update_line(self, line):  # render next line if it's time
+        if self.y + self.y_delta > self.size[1]:  # line does not fit in remaining space
+            self.surface.blit(self.surface, (0, -self.y_delta))  # scroll up
+            self.y += -self.y_delta  # backup a line
+            pygame.draw.rect(self.surface, self.bk_color,
+                             (0, self.y, self.size[0], self.size[1] - self.y))
+
+        text = self.font.render(line, True, self.fg_color)
+        # pygame.draw.rect(text, GREY, text.get_rect(), 1)  # for demo show render area
+        self.surface.blit(text, (0, self.y))
+
+        self.y += self.y_delta
+
+    # call update from pygame main loop
     def update(self):
-        width = max(200, self.font.size(self.text)[0]+10)
-        self.rect.w = width
 
+        time_now = time.time()
+        if (self.next_time is None or self.next_time < time_now) and self.lines:
+            self.next_time = time_now + self.ms_per_line / 1000
+            line = self.lines.pop(0)
+            self._update_line(line)
+            self.dirty = True
+            self.update()  # do it again to catch more than one event per tick
+
+    # call draw from pygam main loop after update
     def draw(self, screen):
-        txt_surface = self.font.render(self.text, True, self.color)
-        width = self.width
-        self.rect.w = width
-        screen.blit(txt_surface, (self.rect.x+5, self.rect.y+5))
-        pygame.draw.rect(screen, self.color, self.rect, 2)
+        screen.blit(self.surface, self.rect)
+
+            
+    def add_line(self, new_line):
+        """Add a new line to the text."""
+        self.lines.append(new_line)
+        self.dirty = True

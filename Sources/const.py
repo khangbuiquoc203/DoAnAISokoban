@@ -21,6 +21,8 @@ font_text_path = os.getcwd() + '\\..\\Assets\\font\\text_font.otf'
 TEXT_COLOR = '#A4925F'
 TEXT_SIZE = 35
 
+#textchat
+font_textchat_path = os.getcwd() + '\\..\\Assets\\gameFont.ttf'
 # button
 button_path = os.getcwd() + '\\..\\Assets\\png\\button.png'
 hover_button_path = os.getcwd() + '\\..\\Assets\\png\\hover_button.png'
@@ -40,6 +42,11 @@ MAP_COLOR='#FDE294'
 icon_path = os.getcwd() + '\\..\\Assets\\icon\\'
 
 # color
+YELLOW = (255, 255, 0)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+GREY = (200, 200, 200)
 
 TEXTBOX_COLOR = 'white'
 TEXTBOX_COLOR_ACTIVE = 'yellow' # light blue
