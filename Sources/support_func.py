@@ -55,14 +55,15 @@ class state:
     def g(self):
         return self.cost 
       
-    def __gt__(self, other):
+    def __lt__(self, other):
         if self.algorithm == "ASTAR": 
-            return (self.h() + self.g()) > (other.h() + other.g()) 
-        elif self.algorithm == "GREEDY": 
-            return (self.h()) > (other.h()) 
+            return (self.h() + self.g()) < (other.h() + other.g()) 
+        elif self.algorithm == "GREEDY" or self.algorithm == "BEAM" or self.algorithm == "HILL": 
+            return (self.h()) < (other.h()) 
         elif self.algorithm == "UCS": 
-            return (self.g()) > (other.g()) 
-        else: return False
+            return (self.g()) < (other.g()) 
+        else: 
+            return False
 
 ''' FIND THE PLAYER'S CURRENT POSITION IN A BOARD '''
 def find_position_player(board):

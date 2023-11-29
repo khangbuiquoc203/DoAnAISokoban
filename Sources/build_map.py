@@ -26,7 +26,7 @@ WHITE = (255, 255, 255)
 #text_font=pygame.font.Font("Arial",30)
 list_board = []
 algorithm_number = 0
-algorithm_list = ["BFS", "DFS", "ASTAR", "UCS", "GREEDY", "IDFS", "Hill", "BEAM", "LDFS"]
+algorithm_list = ["BFS", "DFS", "ASTAR", "UCS", "GREEDY", "IDFS", "HILL", "BEAM", "LDFS"]
 num_states_visited = 0
 '''
 //========================//
@@ -252,6 +252,7 @@ def sokoban(screen, stage, user):
     global list_board
     global algorithm_number
     global num_states_visited
+    listdirect=[]
     pygame.font.init()
     clock = pygame.time.Clock()
     moved = False
@@ -318,13 +319,18 @@ def sokoban(screen, stage, user):
             if algorithm == "BEAM": 
                 list_board = agr.BEAM(maps[stage], list_check_points[stage], 1)
                 num_states_visited = agr.number_states_visited()
-                stateLenght = len(list_board[0]) if list_board != [] else 0
+            if algorithm == "HILL": 
+                list_board = agr.HILL(maps[stage], list_check_points[stage])
+                num_states_visited = agr.number_states_visited()
+            print("Số trạng thái đã duyệt: ",list_board[1])
+            stateLenght = len(list_board[0]) if list_board != [] else 0
             AI_solving= True
             currentState = 0
             # Handle time
             current_time = pygame.time.get_ticks()
             print("Thời gian AI xử lí: "+str(current_time-start_time))
             start_time = pygame.time.get_ticks()
+            listdirect = []
      
         if len(list_board) > 0 and AI_solving == True:
             clock.tick(5)
@@ -333,7 +339,7 @@ def sokoban(screen, stage, user):
                 nowpos = spf.find_position_player(new_board)
                 nextpos = spf.find_position_player(new_list_board[currentState])
                 direct = spf.check_movement_direction(nowpos,nextpos)
-                print(direct)
+                listdirect.append(direct)
                 new_board = new_list_board[currentState]
                 if direct == 'w':
                     player = pygame.image.load(assets_path + '\\playerup.png')
@@ -446,6 +452,7 @@ def sokoban(screen, stage, user):
         save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
         if spf.check_win(new_board, list_check_points[stage]):
+            print(listdirect)
             select_in_menu = menu(screen, user, stage, 1000-move_count*seconds, seconds, move_count-1)
             start_time = pygame.time.get_ticks()
             move_count = 0
