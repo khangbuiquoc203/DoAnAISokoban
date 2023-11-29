@@ -23,6 +23,8 @@ TEXT_SIZE = 35
 
 #textchat
 font_textchat_path = os.getcwd() + '\\..\\Assets\\gameFont.ttf'
+#logchat
+logchat_path = os.getcwd() + '\\..\\Logchatfull\\full_log_all_time.txt'
 # button
 button_path = os.getcwd() + '\\..\\Assets\\png\\button.png'
 hover_button_path = os.getcwd() + '\\..\\Assets\\png\\hover_button.png'

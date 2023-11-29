@@ -47,7 +47,7 @@ class Label():
 
 # textbox class
 class TextScroll:
-    def __init__(self, area, font, fg_color, bk_color, text, ms_per_line=0):
+    def __init__(self, area, font, fg_color, bk_color, text, ms_per_line=800):
 
         super().__init__()
         self.rect = area.copy()
@@ -91,7 +91,7 @@ class TextScroll:
     # call draw from pygam main loop after update
     def draw(self, screen):
         screen.blit(self.surface, self.rect)
-
+        self.dirty = False
             
     def add_line(self, new_line):
         """Add a new line to the text."""
