@@ -362,7 +362,7 @@ Wishing you fun and challenging times!"""
                 AI_solving = False
                 message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms "+"NOT FOUND!!!")
             else:
-                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms")
+                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms STEP: " +str(len(list_board[0])-1))
             print("Số trạng thái đã duyệt: ",list_board[1])
             print("Thời gian AI xử lí: "+str(current_time-start_time))
             
