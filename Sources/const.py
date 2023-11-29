@@ -47,6 +47,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 GREY = (200, 200, 200)
+TRANSPARENT = (255, 255, 255, 25)
 
 TEXTBOX_COLOR = 'white'
 TEXTBOX_COLOR_ACTIVE = 'yellow' # light blue

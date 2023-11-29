@@ -277,7 +277,7 @@ def sokoban(screen, stage, user):
     welcomemessage="""Welcome to Sokoban!
 Showcase your logic skills and move the boxes to the target locations.
 Wishing you fun and challenging times!"""
-    message = controls.TextScroll(area, font, c.BLACK, c.WHITE, welcomemessage, ms_per_line=500)
+    message = controls.TextScroll(area, font, c.WHITE, c.TRANSPARENT, welcomemessage, ms_per_line=500)
     
     while running:     
         # Draw stage
