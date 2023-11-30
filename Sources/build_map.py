@@ -45,8 +45,6 @@ space = pygame.image.load(os.getcwd() + '\\space.png')
 init_background = pygame.image.load(os.getcwd() + '\\init_background.png')
 icon_image  = pygame.image.load(os.getcwd() + '\\icon_image.png')
 
-text_font=pygame.font.Font(os.getcwd() + '\\game.ttf',45)
-textsmall_font=pygame.font.Font(os.getcwd() + '\\game.ttf',30)
 
 
 
@@ -242,7 +240,7 @@ class enum_of_control_game(Enum):
 //      SOKOBAN FUNCTION     //
 //===========================//
 '''
-def sokoban(screen, stage, user):
+def sokoban(screen, stage, user, is_play_music):
     control_game = [] #0: algorithm, 1: play, 2: pause, 3: home, 4: replay, 5: undo, 6: sound
     control_info = [] #0: lv, 1: move, 2: time
     create_control_game(control_game, control_info)
@@ -321,7 +319,7 @@ Wishing you fun and challenging times!"""
         #display(stage)
         #draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
         #draw_text("Solve step: " + str(stateLenght), textsmall_font, (255, 255, 255), 700, 50)
-        if control_game[1].is_clicked():
+        if control_game[enum_of_control_game.PLAY.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
             start_time = pygame.time.get_ticks()
             print('SOLVE')
@@ -383,7 +381,7 @@ Wishing you fun and challenging times!"""
             
      
         if len(list_board) > 0 and AI_solving == True:
-            clock.tick(5)
+            clock.tick(1)
             new_list_board = list_board[0][1:]
             if currentState < len(new_list_board):
                 nowpos = spf.find_position_player(new_board)
@@ -442,7 +440,17 @@ Wishing you fun and challenging times!"""
                 new_board = temp_board
                 moved = True
                 move_count -= 1
-        
+                
+        if control_game[enum_of_control_game.SOUND.value].is_clicked():
+            if is_play_music:
+                is_play_music = False
+                pygame.mixer.music.stop()
+                control_game[enum_of_control_game.SOUND.value].text = pygame.image.load(c.icon_path+'SoundOff.png')
+            else:
+                is_play_music = True
+                pygame.mixer.music.play(-1)
+                control_game[enum_of_control_game.SOUND.value].text = pygame.image.load(c.icon_path+'SoundOn.png')
+            
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:

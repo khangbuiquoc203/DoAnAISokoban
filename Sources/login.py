@@ -7,11 +7,20 @@ import const as c
 from build_map import *
 import random
 
+is_play_music = True
+
 def init():
     pygame.init()
     screen = pygame.display.set_mode((c.SCREEN_WIDTH, c.SCREEN_HEIGHT)) 
     pygame.display.set_caption('Sokoban')
-
+    
+    pygame.mixer.init()
+    pygame.mixer.music.load(c.assets_path+'music.mp3')  # Đặt đường dẫn đến file nhạc của bạn
+    pygame.mixer.music.set_volume(0.3)  # Đặt âm lượng (từ 0.0 đến 1.0)
+    
+    # Bắt đầu phát nhạc
+    pygame.mixer.music.play(-1)  # -1 để lặp vô hạn, 0 để chơi một lần
+    
     run = True
     while run:
         screen.fill('white')
@@ -359,7 +368,7 @@ def player_2(screen):
     stage_list  = list(range(30))
     random.shuffle(stage_list)
 
-    build_map_2player.sokoban_2_player(screen, stage_list)
+    build_map_2player.sokoban_2_player(screen, stage_list, is_play_music)
     
 def AI(screen):
     # danh sách 4 button, mỗi button chứa [picture, picture_rect, text, text_rect]
@@ -447,7 +456,7 @@ def map(screen, level):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:     
                 if hover != -1 and int(user.score[level*10 + hover]) != -1:
                     pygame.mixer.Sound(c.click_sound_path).play()           
-                    sokoban(screen, buttons[hover][4], user)
+                    sokoban(screen, buttons[hover][4], user, is_play_music)
                     hover = -1 # đặt lại hover mỗi lần load map
                 if back_rect.collidepoint(event.pos):
                     pygame.mixer.Sound(c.click_sound_path).play()           
