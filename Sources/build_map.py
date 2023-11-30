@@ -266,6 +266,8 @@ def sokoban(screen, stage, user, is_play_music):
     # Thiết lập thời gian ban đầu (tính theo mili giây)
     start_time = pygame.time.get_ticks()
     elapsed_time = 0
+    play_time = 0
+    is_pause = False
     # Move
     move_count = 0
     
@@ -292,15 +294,17 @@ Wishing you fun and challenging times!"""
         # Draw stage
         control_info[0] = controls.Label(c.font_title_path, "Lv: "+str(stage+1), size=38, color=c.TITLE_COLOR, location_topleft=(60,20))
         # Handle time
-        current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - start_time
-        seconds = elapsed_time // 1000
-        control_info[2] = controls.Label(c.font_title_path, "Time: "+str(seconds//60)+":"+str(seconds%60), size=38, color=c.TITLE_COLOR, location_topleft=(850,20))
+        if is_pause == False:
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - start_time + play_time
+            seconds = elapsed_time // 1000
+            control_info[2] = controls.Label(c.font_title_path, "Time: "+str(seconds//60)+":"+str(seconds%60), size=38, color=c.TITLE_COLOR, location_topleft=(850,20))
         screen.blit(init_background, (0, 0))
         pygame.display.set_icon(icon_image)
         # Handle move
         control_info[1] = controls.Label(c.font_title_path, "Move: "+str(move_count), size=38, color=c.TITLE_COLOR, location_topleft=(540,20))
-        
+            
+                
         # draw control
         for i in control_info:
             i.draw(screen)
@@ -317,6 +321,7 @@ Wishing you fun and challenging times!"""
         
         if control_game[enum_of_control_game.PLAY.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
+            
             start_time = pygame.time.get_ticks()
             print('SOLVE')
             if algorithm == "BFS": 
@@ -374,9 +379,14 @@ Wishing you fun and challenging times!"""
             
             start_time = pygame.time.get_ticks()
             listdirect = []
-            
+        
+        if control_game[enum_of_control_game.PAUSE.value].is_clicked():
+            pygame.mixer.Sound(c.click_sound_path).play()
+            is_pause = not is_pause
+            play_time += (current_time-start_time)
+            start_time = pygame.time.get_ticks()
      
-        if len(list_board) > 0 and AI_solving == True:
+        if len(list_board) > 0 and AI_solving == True  and is_pause == False:
             clock.tick(6)
             new_list_board = list_board[0][1:]
             if currentState < len(new_list_board):
@@ -427,7 +437,7 @@ Wishing you fun and challenging times!"""
             new_board = maps[stage]
             moved == False
             move_count = 0
-            start_time=pygame.time.getticks()
+            start_time=pygame.time.get_ticks()
              
         if control_game[enum_of_control_game.UNDO.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
@@ -449,7 +459,7 @@ Wishing you fun and challenging times!"""
             
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == setting.undo_player1 or event.key == setting.undo_player2:
+                if event.key == setting.undo_player1 or event.key == setting.undo_player2 :
                     pygame.mixer.Sound(c.click_sound_path).play()
                     temp_board = load_matrix_from_txt(backward_path + '\\backward.txt')
                     if move_count > 0 and new_board != temp_board:
@@ -462,7 +472,7 @@ Wishing you fun and challenging times!"""
                     new_board = maps[stage]
                     moved == False
                     move_count = 0
-                if event.key == setting.up_player1 or event.key == setting.up_player2:
+                if (event.key == setting.up_player1 or event.key == setting.up_player2)  and is_pause == False:
                     backward_matrix = new_board
                     temp_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage])  
                     if new_board != temp_board:
@@ -472,7 +482,7 @@ Wishing you fun and challenging times!"""
                     player = pygame.image.load(assets_path + '\\playerup.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
 
-                if event.key == setting.down_player1 or event.key == setting.down_player2:
+                if (event.key == setting.down_player1 or event.key == setting.down_player2)  and is_pause == False:
                     backward_matrix = new_board
                     temp_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])  
                     if new_board != temp_board:
@@ -481,7 +491,7 @@ Wishing you fun and challenging times!"""
                         move_count += 1  
                     player = pygame.image.load(assets_path + '\\playerdown.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-                if event.key == setting.left_player1 or event.key == setting.left_player2:
+                if (event.key == setting.left_player1 or event.key == setting.left_player2)  and is_pause == False:
                     backward_matrix = new_board
                     temp_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])  
                     if new_board != temp_board:
@@ -490,7 +500,7 @@ Wishing you fun and challenging times!"""
                         move_count += 1  
                     player = pygame.image.load(assets_path + '\\playerleft.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-                if event.key == setting.right_player1 or event.key == setting.right_player2:
+                if (event.key == setting.right_player1 or event.key == setting.right_player2)  and is_pause == False:
                     backward_matrix = new_board
                     temp_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])  
                     if new_board != temp_board:
@@ -502,7 +512,7 @@ Wishing you fun and challenging times!"""
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-                
+        
         if moved == False:
             drawBoard(maps[stage])
             new_board = maps[stage]

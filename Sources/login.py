@@ -253,7 +253,7 @@ def game(screen):
 def play(screen):
     # danh sách 4 button, mỗi button chứa [picture, picture_rect, text, text_rect]
     buttons = []
-    create_buttons(buttons, 4, ['1 PLAYER', '2 PLAYER', 'AI', 'BACK'])
+    create_buttons(buttons, 3, ['1 PLAYER', '2 PLAYER', 'BACK'])
     
     hover = -1
     running = True
@@ -274,7 +274,7 @@ def play(screen):
             if event.type == QUIT:
                 quit()
             if event.type == MOUSEMOTION:
-                for i in range(4):
+                for i in range(3):
                     # buttons: list of [picture, picture_rect, text, text_rect]
                     if buttons[i][1].collidepoint(event.pos):
                         hover = i
@@ -290,10 +290,6 @@ def play(screen):
                     player_2(screen)
                     hover = -1
                 elif hover == 2:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    AI(screen)
-                    hover = -1
-                elif hover == 3:
                     pygame.mixer.Sound(c.click_sound_path).play()           
                     running = False
         
@@ -454,8 +450,6 @@ def setting(screen):
     
         pygame.display.update()
         
-
-
 # SCREEN PLAYER
 def player_1(screen):
     # danh sách 4 button, mỗi button chứa [picture, picture_rect, text, text_rect]
