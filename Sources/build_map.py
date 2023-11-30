@@ -339,7 +339,7 @@ Wishing you fun and challenging times!"""
                 list_board = agr.LDFS(maps[stage], list_check_points[stage])
                 num_states_visited = agr.number_states_visited()
             if algorithm == "BEAM": 
-                list_board = agr.BEAM(maps[stage], list_check_points[stage], 1)
+                list_board = agr.BEAM(maps[stage], list_check_points[stage], 3)
                 num_states_visited = agr.number_states_visited()
             if algorithm == "HILL": 
                 list_board = agr.HILL(maps[stage], list_check_points[stage])
