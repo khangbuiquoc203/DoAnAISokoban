@@ -8,7 +8,7 @@ import sys
 import const as c
 from build_map import *
 import random
-
+import setting as s
 is_play_music = True
 
 def init():
@@ -87,12 +87,7 @@ def set_hover_button(buttons, hover):
         buttons[hover][0] = pygame.transform.scale(buttons[hover][0], (buttons[hover][0].get_width()*1.2, buttons[hover][0].get_height()))
        
 def create_buttons_map(buttons, quantity, level, user_score):
-    # create texts
     texts = []
-    # for i in range(quantity):
-    #     if int(user_level[level*10 + i]) != -1:
-    #         texts.append(str(level*10 + i + 1))
-    #     else:
     i = 0
     while i<quantity:
         if int(user_score[level*10 + i]) != -1:
@@ -191,7 +186,6 @@ def login(screen):
                             username += event.unicode
 
         set_hover_button(buttons, hover)
-
         if active == textbox_username:
             pygame.draw.rect(screen, c.TEXTBOX_COLOR_ACTIVE, textbox_username, 2)
         
@@ -209,7 +203,7 @@ def quit():
 def game(screen):
     # danh sách 4 button, mỗi button chứa [picture, picture_rect, text, text_rect]
     buttons = []
-    create_buttons(buttons, 4, ['PLAY', 'SCORE', 'OPTION', 'QUIT'])
+    create_buttons(buttons, 4, ['PLAY', 'SCORE', 'SETTING', 'QUIT'])
     
     hover = -1
     while True:
@@ -246,7 +240,7 @@ def game(screen):
                     hover = -1
                 elif hover == 2:
                     pygame.mixer.Sound(c.click_sound_path).play()           
-                    print('option')
+                    setting(screen)
                     hover = -1
                 elif hover == 3:
                     pygame.mixer.Sound(c.click_sound_path).play()           
@@ -337,8 +331,129 @@ def score(screen):
         pygame.display.update()
     
 # SCREEN OPTION
-def option(screen):
-    print('option')
+def setting(screen):
+    back = pygame.image.load(c.icon_path+'back.png')
+    back_rect = back.get_rect(topleft=(10,c.SCREEN_HEIGHT-back.get_height()))
+    running = True
+    active = None
+    while running:
+        draw_background(screen)
+        draw_title(screen, 'SOKOBAN')
+        draw_welcome(screen, 'SETTING')
+        screen.blit(back, back_rect)
+        setting_player1 = [s.up_player1, s.down_player1, s.left_player1, s.right_player1, s.undo_player1]
+        setting_player2 = [s.up_player2, s.down_player2, s.left_player2, s.right_player2, s.undo_player2]
+        # draw text player 1
+        controls.Label(c.font_title_path, 'Player 1', size=25, color='white', 
+                            location_topleft=(c.SCREEN_WIDTH//2-250,250)).draw(screen)
+        texts = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'UNDO']
+        for i in range(5):
+            controls.Label(c.font_title_path, texts[i], size=20, color=c.TITLE_COLOR, 
+                            location_topleft=(c.SCREEN_WIDTH//2-250+(i%2)*300,300+(i//2)*50)).draw(screen)
+        # draw text player 2
+        controls.Label(c.font_title_path, 'Player 2', size=25, color='white', 
+                            location_topleft=(c.SCREEN_WIDTH//2-250,450)).draw(screen)
+        for i in range(5):
+            controls.Label(c.font_title_path, texts[i], size=20, color=c.TITLE_COLOR, 
+                            location_topleft=(c.SCREEN_WIDTH//2-250+(i%2)*300,500+(i//2)*50)).draw(screen)
+        
+        controls.Label(c.font_title_path, 'Others', size=25, color='white', 
+                            location_topleft=(c.SCREEN_WIDTH//2-250,650)).draw(screen)
+        # draw text reset
+        controls.Label(c.font_title_path, "Reset", size=20, color=c.TITLE_COLOR, 
+                        location_topleft=(c.SCREEN_WIDTH//2-250,700)).draw(screen)
+        # textbox player 1 
+        textboxs_player1 = []
+        for i in range(5):
+            textbox = pygame.Rect(c.SCREEN_WIDTH//2-150+(i%2)*300,295+(i//2)*50,180,25+10)
+            textboxs_player1.append(textbox)
+        
+        for i in range(len(textboxs_player1)):
+            pygame.draw.rect(screen, c.TEXTBOX_COLOR, textboxs_player1[i], 2)
+            
+            controls.Label(c.font_title_path, pygame.key.name(setting_player1[i]), size=20, color='red', 
+                            location_topleft=(textboxs_player1[i].x+10,textboxs_player1[i].y+5)).draw(screen)
+            
+        # textbox player 2
+        textboxs_player2 = []
+        for i in range(5):
+            textbox = pygame.Rect(c.SCREEN_WIDTH//2-150+(i%2)*300,495+(i//2)*50,180,25+10)
+            textboxs_player2.append(textbox)
+        # textbox reset
+        for i in range(len(textboxs_player2)):
+            pygame.draw.rect(screen, c.TEXTBOX_COLOR, textboxs_player2[i], 2)  
+            
+            controls.Label(c.font_title_path, pygame.key.name(setting_player2[i]), size=20, color='red', 
+                            location_topleft=(textboxs_player2[i].x+10,textboxs_player2[i].y+5)).draw(screen)
+        
+        reset_textbox = pygame.Rect(c.SCREEN_WIDTH//2-150,695,100,25+10)
+        pygame.draw.rect(screen, c.TEXTBOX_COLOR, reset_textbox, 2)  
+        
+        controls.Label(c.font_title_path, pygame.key.name(s.reset), size=20, color='red', 
+                        location_topleft=(reset_textbox.x+10,reset_textbox.y+5)).draw(screen)
+        
+        pygame.display.update()# event
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                quit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:   
+                for i in textboxs_player1:
+                    if i.collidepoint(event.pos):
+                        active = i
+                for i in textboxs_player2:
+                    if i.collidepoint(event.pos):
+                        active = i 
+                if reset_textbox.collidepoint(event.pos):
+                    active = reset_textbox
+                if back_rect.collidepoint(event.pos):
+                    pygame.mixer.Sound(c.click_sound_path).play()           
+                    running = False
+                    
+            if event.type == pygame.KEYDOWN:
+                if active == textboxs_player1[0]:
+                    s.up_player1 = event.key
+                    
+                if active == textboxs_player1[1]:
+                    s.down_player1 = event.key
+                    
+                if active == textboxs_player1[2]:
+                    s.left_player1 = event.key
+                    
+                if active == textboxs_player1[3]:
+                    s.right_player1 = event.key
+                    
+                if active == textboxs_player1[4]:
+                    s.undo_player1 = event.key
+                    
+                if active == textboxs_player2[0]:
+                    s.up_player2 = event.key
+                    
+                if active == textboxs_player2[1]:
+                    s.down_player2 = event.key
+                    
+                if active == textboxs_player2[2]:
+                    s.left_player2 = event.key
+                    
+                if active == textboxs_player2[3]:
+                    s.right_player2 = event.key
+                    
+                if active == textboxs_player2[4]:
+                    s.undo_player1 = event.key
+                    
+                if active == reset_textbox:
+                    s.reset = event.key
+                    
+        for i in textboxs_player1:
+            if active == i:
+                pygame.draw.rect(screen, c.TEXTBOX_COLOR_ACTIVE, i, 2)         
+        for i in textboxs_player2:
+            if active == i:
+                pygame.draw.rect(screen, c.TEXTBOX_COLOR_ACTIVE, i, 2)                
+        if active == reset_textbox:
+            pygame.draw.rect(screen, c.TEXTBOX_COLOR_ACTIVE, reset_textbox, 2)                
+    
+        pygame.display.update()
+        
 
 
 # SCREEN PLAYER

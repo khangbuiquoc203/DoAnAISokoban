@@ -13,6 +13,7 @@ import keyboard
 import time
 from enum import Enum
 from datetime import datetime
+import setting
 '''
 //========================//
 //         PYGAME         //
@@ -448,20 +449,20 @@ Wishing you fun and challenging times!"""
             
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
+                if event.key == setting.undo_player1 or event.key == setting.undo_player2:
                     pygame.mixer.Sound(c.click_sound_path).play()
                     temp_board = load_matrix_from_txt(backward_path + '\\backward.txt')
                     if move_count > 0 and new_board != temp_board:
                         new_board = temp_board
                         moved = True
                         move_count -= 1
-                if event.key == pygame.K_SPACE:
+                if event.key == setting.reset:
                     pygame.mixer.Sound(c.click_sound_path).play()
                     drawBoard(maps[stage])
                     new_board = maps[stage]
                     moved == False
                     move_count = 0
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                if event.key == setting.up_player1 or event.key == setting.up_player2:
                     backward_matrix = new_board
                     temp_board = spf.move_in_1_direction(new_board, 'U', list_check_points[stage])  
                     if new_board != temp_board:
@@ -471,7 +472,7 @@ Wishing you fun and challenging times!"""
                     player = pygame.image.load(assets_path + '\\playerup.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
 
-                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                if event.key == setting.down_player1 or event.key == setting.down_player2:
                     backward_matrix = new_board
                     temp_board = spf.move_in_1_direction(new_board, 'D', list_check_points[stage])  
                     if new_board != temp_board:
@@ -480,7 +481,7 @@ Wishing you fun and challenging times!"""
                         move_count += 1  
                     player = pygame.image.load(assets_path + '\\playerdown.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                if event.key == setting.left_player1 or event.key == setting.left_player2:
                     backward_matrix = new_board
                     temp_board = spf.move_in_1_direction(new_board, 'L', list_check_points[stage])  
                     if new_board != temp_board:
@@ -489,7 +490,7 @@ Wishing you fun and challenging times!"""
                         move_count += 1  
                     player = pygame.image.load(assets_path + '\\playerleft.png')
                     pygame.mixer.Sound(assets_path + '\\movesound.wav').play()
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                if event.key == setting.right_player1 or event.key == setting.right_player2:
                     backward_matrix = new_board
                     temp_board = spf.move_in_1_direction(new_board, 'R', list_check_points[stage])  
                     if new_board != temp_board:
