@@ -106,3 +106,44 @@ Wishing you fun and challenging times!
 [17:41:34][STAGE:13]HILL: State: 24 Time: 19 ms STEP: 24
 [17:41:39][STAGE:13]BEAM: State: 25 Time: 20 ms STEP: 18
 [17:41:43][STAGE:13]LDFS: State: 28 Time: 20 ms STEP: 24
+TESTDAY: 30/11/2023 STAGE: 14
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+[17:50:40][STAGE:14]BFS: State: 62 Time: 83 ms STEP: 9
+[17:50:43][STAGE:14]DFS: State: 28 Time: 20 ms STEP: 13
+[17:50:48][STAGE:14]ASTAR: State: 49 Time: 54 ms STEP: 9
+[17:50:50][STAGE:14]UCS: State: 60 Time: 76 ms STEP: 9
+[17:50:54][STAGE:14]GREEDY: State: 19 Time: 12 ms STEP: 9
+[17:50:56][STAGE:14]IDFS: State: 27 Time: 19 ms STEP: 13
+TESTDAY: 30/11/2023 STAGE: 14
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+[17:53:33][STAGE:14]BFS: State: 72 Time: 113 ms STEP: 13
+TESTDAY: 30/11/2023 STAGE: 14
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+[17:54:42][STAGE:14]BFS: State: 139 Time: 421 ms STEP: 14
+[17:54:45][STAGE:14]DFS: State: 32 Time: 26 ms STEP: 20
+[17:54:51][STAGE:14]ASTAR: State: 137 Time: 394 ms STEP: 14
+[17:54:55][STAGE:14]UCS: State: 142 Time: 393 ms STEP: 14
+[17:54:58][STAGE:14]GREEDY: State: 33 Time: 34 ms STEP: 18
+[17:55:3][STAGE:14]IDFS: State: 27 Time: 20 ms STEP: 18
+[17:55:7][STAGE:14]HILL: State: 11 Time: 6 ms NOT FOUND!!!
+[17:55:9][STAGE:14]BEAM: State: 33 Time: 34 ms STEP: 18
+[17:55:13][STAGE:14]LDFS: State: 32 Time: 26 ms STEP: 18
+TESTDAY: 30/11/2023 STAGE: 15
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+[18:7:29][STAGE:15]BFS: State: 2114 Time: 81417 ms STEP: 19
+[18:7:40][STAGE:15]DFS: State: 331 Time: 2649 ms STEP: 29
+[18:8:42][STAGE:15]ASTAR: State: 1677 Time: 55142 ms STEP: 25
+[18:10:12][STAGE:15]UCS: State: 2154 Time: 84294 ms STEP: 19
+[18:10:25][STAGE:15]GREEDY: State: 96 Time: 227 ms STEP: 23
+[18:10:32][STAGE:15]IDFS: State: 288 Time: 2085 ms STEP: 29
+[18:10:38][STAGE:15]HILL: State: 2 Time: 2 ms NOT FOUND!!!
+[18:10:40][STAGE:15]BEAM: State: 158 Time: 629 ms STEP: 27
+[18:10:48][STAGE:15]LDFS: State: 269 Time: 1740 ms STEP: 21
