@@ -305,7 +305,6 @@ Wishing you fun and challenging times!"""
             
         for i in control_game:
             i.draw(screen)
-        #pygame.draw.rect(screen, 'white', pygame.Rect(60, 220, 400, 360))
         
         
         
@@ -314,11 +313,6 @@ Wishing you fun and challenging times!"""
         message.draw(screen)
         
         
-        
-        
-        #display(stage)
-        #draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
-        #draw_text("Solve step: " + str(stateLenght), textsmall_font, (255, 255, 255), 700, 50)
         if control_game[enum_of_control_game.PLAY.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
             start_time = pygame.time.get_ticks()
