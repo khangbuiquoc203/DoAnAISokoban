@@ -43,3 +43,38 @@ Wishing you fun and challenging times!
 [17:12:45][STAGE:12]HILL: State=12 Time: 9 ms NOT FOUND!!!
 [17:18:53][STAGE:12]BFS: State=1369 Time: 38818 ms STEP: 19
 [17:19:52][STAGE:12]BFS: State=1266 Time: 31954 ms STEP: 19
+TESTDAY: 30/11/2023 STAGE: 1
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+TESTDAY: 30/11/2023 STAGE: 1
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+TESTDAY: 30/11/2023 STAGE: 6
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+[17:26:14][STAGE:6]BFS: State=141 Time: 440 ms STEP: 12
+[17:27:2][STAGE:6]DFS: State=81 Time: 155 ms STEP: 12
+TESTDAY: 30/11/2023 STAGE: 1
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+TESTDAY: 30/11/2023 STAGE: 1
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+TESTDAY: 30/11/2023 STAGE: 6
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+[17:28:54][STAGE:6]BFS: State=147 Time: 444 ms STEP: 12
+[17:28:59][STAGE:6]DFS: State=83 Time: 168 ms STEP: 12
+[17:29:2][STAGE:6]ASTAR: State=95 Time: 180 ms STEP: 12
+[17:29:7][STAGE:6]UCS: State=136 Time: 374 ms STEP: 12
+[17:29:10][STAGE:6]GREEDY: State=56 Time: 74 ms STEP: 12
+[17:29:13][STAGE:6]IDFS: State=91 Time: 198 ms STEP: 12
+[17:29:17][STAGE:6]HILL: State=6 Time: 3 ms NOT FOUND!!!
+[17:29:18][STAGE:6]BEAM: State=56 Time: 79 ms STEP: 12
+[17:29:22][STAGE:6]LDFS: State=158 Time: 629 ms STEP: 12

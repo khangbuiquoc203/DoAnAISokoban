@@ -381,7 +381,7 @@ Wishing you fun and challenging times!"""
             
      
         if len(list_board) > 0 and AI_solving == True:
-            clock.tick(1)
+            clock.tick(6)
             new_list_board = list_board[0][1:]
             if currentState < len(new_list_board):
                 nowpos = spf.find_position_player(new_board)
@@ -620,10 +620,8 @@ def Mbox(title, text, style):
     ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
 def save_log_chat(text_to_copy):
-    # Tên tệp tin bạn muốn chép vào
     file_path = c.logchat_path
     
-    # Mở tệp tin để ghi (nếu tệp không tồn tại, nó sẽ được tạo mới)
     with open(file_path, "a") as file:
         file.write("\n")
         file.write(text_to_copy)
