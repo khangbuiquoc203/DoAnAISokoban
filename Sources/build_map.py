@@ -362,11 +362,11 @@ Wishing you fun and challenging times!"""
                 list_board.append(0)  # Thêm một phần tử để có ít nhất 1 phần tử trong danh sách
                 list_board.append(num_states_visited)
                 AI_solving = False
-                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms "+"NOT FOUND!!!")
-                save_log_chat("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms "+"NOT FOUND!!!")
+                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s "+"NOT FOUND!!!")
+                save_log_chat("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s "+"NOT FOUND!!!")
             else:
-                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms STEP: " +str(len(list_board[0])-1))
-                save_log_chat("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms STEP: " +str(len(list_board[0])-1))
+                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s STEP: " +str(len(list_board[0])-1))
+                save_log_chat("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s STEP: " +str(len(list_board[0])-1))
             print("Số trạng thái đã duyệt: ",list_board[1])
             print("Thời gian AI xử lí: "+str(current_time-start_time))
             

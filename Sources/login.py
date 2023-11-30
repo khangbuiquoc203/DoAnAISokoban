@@ -1,6 +1,7 @@
 import User
 import build_map_2player
-import build_map_play_with_AI
+# import build_map_play_with_AI
+
 import pygame
 from pygame.locals import *
 import sys
