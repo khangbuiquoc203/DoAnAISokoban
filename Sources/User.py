@@ -86,3 +86,26 @@ def update_user(user_object):
                 string += str(i.level[temp])+','+str(i.score[temp])+';'
             string += '\n'
             file.write(string)
+            
+def get_top10_highest_score():
+    users_list = []
+    with open(c.login_path+'detail.txt', 'r') as file:
+        user_data = file.read().split('\n')  # mỗi người dùng được ngăn cách bởi dòng trắng
+        for data in user_data:
+            if data == '':
+                continue
+            user_info = data.split(';')  # Tách thông tin người dùng
+            name = user_info[0]
+            level = []
+            score = []
+            for i in range(1, 31):
+                temp = user_info[i].split(',')
+                level.append(temp[0])
+                score.append(temp[1])
+            users_list.append(user(name, level, score))
+    
+    result = [] # [username, score]    
+    for i in users_list:
+        result.append([i.username, sum(int(num) for num in i.score if int(num) > 0)])
+    top_10_players  = sorted(result, key=lambda x: x[1], reverse=True)
+    return top_10_players[:10]

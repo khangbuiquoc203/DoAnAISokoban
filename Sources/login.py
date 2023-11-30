@@ -1,5 +1,6 @@
 import User
 import build_map_2player
+import build_map_play_with_AI
 import pygame
 from pygame.locals import *
 import sys
@@ -240,7 +241,7 @@ def game(screen):
                     hover = -1 
                 elif hover == 1:
                     pygame.mixer.Sound(c.click_sound_path).play()           
-                    print('score')
+                    score(screen)
                     hover = -1
                 elif hover == 2:
                     pygame.mixer.Sound(c.click_sound_path).play()           
@@ -306,7 +307,33 @@ def play(screen):
 
 # SCREEN SCORE
 def score(screen):
-    print('score')
+    back = pygame.image.load(c.icon_path+'back.png')
+    back_rect = back.get_rect(topleft=(10,c.SCREEN_HEIGHT-back.get_height()))
+    running = True
+    while running:
+        draw_background(screen)
+        draw_title(screen, 'SOKOBAN')
+        draw_welcome(screen, 'HIGHEST SCORE')
+        screen.blit(back, back_rect)
+        highest_score_users = User.get_top10_highest_score()
+        for i in range(len(highest_score_users)):
+            controls.Label(c.font_title_path, str(i+1), size=30, color=c.TITLE_COLOR, 
+                                   location_topleft=(c.SCREEN_WIDTH//2-250,250+i*50)).draw(screen)
+            
+            controls.Label(c.font_title_path, str(highest_score_users[i][0]), size=30, color=c.TITLE_COLOR, 
+                                   location_topleft=(c.SCREEN_WIDTH//2-70,250+i*50)).draw(screen)
+            
+            controls.Label(c.font_title_path, str(highest_score_users[i][1]), size=30, color=c.TITLE_COLOR, 
+                                   location_topleft=(c.SCREEN_WIDTH//2+150,250+i*50)).draw(screen)
+        # event
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                quit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:     
+                if back_rect.collidepoint(event.pos):
+                    pygame.mixer.Sound(c.click_sound_path).play()           
+                    running = False
+        pygame.display.update()
     
 # SCREEN OPTION
 def option(screen):
@@ -371,54 +398,11 @@ def player_2(screen):
     build_map_2player.sokoban_2_player(screen, stage_list, is_play_music)
     
 def AI(screen):
-    # danh sách 4 button, mỗi button chứa [picture, picture_rect, text, text_rect]
-    buttons = []
-    create_buttons(buttons, 4, ['EASY', 'MEDIUM', 'HARD', 'BACK'])
     
-    hover = -1
-    running = True
-    while running:
-        draw_background(screen)
-        draw_title(screen, 'SOKOBAN')
-        draw_welcome(screen, 'WELCOME '+user.username)
-       
-        # do hover button và button thường khác nhau nên khi hover != null thì cần set lại
-        set_hover_button(buttons, hover)
-        
-        # draw button
-        for i in buttons:
-            screen.blit(i[0], i[1]) # blit button
-            screen.blit(i[2], i[3]) # blit text
-        # event
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                quit()
-            if event.type == MOUSEMOTION:
-                for i in range(4):
-                    # buttons: list of [picture, picture_rect, text, text_rect]
-                    if buttons[i][1].collidepoint(event.pos):
-                        hover = i
-                        break
-                    hover = -1
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:      
-                if hover == 0:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    map(screen, level=0)
-                    hover = -1
-                elif hover == 1:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    map(screen, level=1)
-                    hover = -1
-                elif hover == 2:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    map(screen, level=2)
-                    hover = -1
-                elif hover == 3:
-                    pygame.mixer.Sound(c.click_sound_path).play()           
-                    running = False
-        
-        
-        pygame.display.update()
+    stage_list  = list(range(30))
+    random.shuffle(stage_list)
+
+    build_map_play_with_AI.sokoban_play_with_AI(screen, stage_list, is_play_music)
 
 # SCREEN MAP
 def map(screen, level):

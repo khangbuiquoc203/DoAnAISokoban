@@ -14,3 +14,8 @@ Showcase your logic skills and move the boxes to the target.
 Wishing you fun and challenging times!
 [0:2:2][STAGE:1]GREEDY: State=71 Time: 131 ms STEP: 15
 [0:2:6][STAGE:2]GREEDY: State=34 Time: 32 ms STEP: 14
+TESTDAY: 30/11/2023 STAGE: 1
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!
+[17:24:20][STAGE:1]BFS: State=987 Time: 17222 ms STEP: 13
