@@ -24,7 +24,7 @@ class enum_of_control_game(Enum):
     SOUND = 3
     HOME = 4
     
-def sokoban_2_player(screen, stage_list):
+def sokoban_2_player(screen, stage_list, is_play_music):
     player1 = pygame.image.load(os.getcwd() + '\\..\\Assets\\playerleft.png')
     player2 = pygame.image.load(os.getcwd() + '\\..\\Assets\\playerleft.png')
     control_game = [] #0: Play, 1: Pause, 2: Replay, 3: Sound, 4: Home
@@ -41,9 +41,6 @@ def sokoban_2_player(screen, stage_list):
     new_board_player2 = []
     player1_stage = 0
     player2_stage = 0
-        
-    score_player1 = 0
-    score_player2 = 0
     
     maps = build_map.get_boards()  
     list_check_points = build_map.get_check_points()
@@ -59,6 +56,7 @@ def sokoban_2_player(screen, stage_list):
             current_time = pygame.time.get_ticks()
             
             if control_game[enum_of_control_game.PAUSE.value].is_clicked():
+                pygame.mixer.Sound(c.click_sound_path).play()
                 is_pause = True
                 play_time += (current_time-start_time)
                 start_time = current_time
@@ -70,28 +68,38 @@ def sokoban_2_player(screen, stage_list):
         controls.Label(c.font_title_path, "Time: "+convert_time_to_str(timer, current_time, start_time+1000, play_time), 
                                     size=45, color=c.TITLE_COLOR, location_topleft=(420,40)).draw(screen)
         controls.Label(c.font_title_path, "Map clear: "+str(player1_stage), size=30, color=c.TITLE_COLOR, location_topleft=(60,150)).draw(screen)
-        controls.Label(c.font_title_path, "Map clear: "+str(player1_stage), size=30, color=c.TITLE_COLOR, location_topleft=(660,150)).draw(screen)
+        controls.Label(c.font_title_path, "Map clear: "+str(player2_stage), size=30, color=c.TITLE_COLOR, location_topleft=(660,150)).draw(screen)
         
         if control_game[enum_of_control_game.PLAY.value].is_clicked():
+            pygame.mixer.Sound(c.click_sound_path).play()
             if is_pause:
                 is_pause = False
                 start_time = pygame.time.get_ticks()
             
         if control_game[enum_of_control_game.REPLAY.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
-            drawBoard(screen, maps[player1_stage], 1, player1)
-            drawBoard(screen, maps[player2_stage], 2, player2)
-            new_board_player1 = maps[player1_stage]
-            new_board_player2 = maps[player2_stage]
+            drawBoard(screen, maps[stage_list[player1_stage]], 1, player1)
+            drawBoard(screen, maps[stage_list[player2_stage]], 2, player2)
+            new_board_player1 = maps[stage_list[player1_stage]]
+            new_board_player2 = maps[stage_list[player2_stage]]
             moved_player1 = False
             moved_player2 = False
+            player1_stage = 0
+            player2_stage = 0
             start_time = pygame.time.get_ticks()
             play_time = 0
             is_pause = False
             
         if control_game[enum_of_control_game.SOUND.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
-            print("sound")
+            if is_play_music:
+                is_play_music = False
+                pygame.mixer.music.stop()
+                control_game[enum_of_control_game.SOUND.value].text = pygame.image.load(c.icon_path+'SoundOff.png')
+            else:
+                is_play_music = True
+                pygame.mixer.music.play(-1)
+                control_game[enum_of_control_game.SOUND.value].text = pygame.image.load(c.icon_path+'SoundOn.png')
             
         if control_game[enum_of_control_game.HOME.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
@@ -100,28 +108,28 @@ def sokoban_2_player(screen, stage_list):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and is_pause == False:
                 if event.key == pygame.K_w:
-                    temp_board = spf.move_in_1_direction(new_board_player1, 'U', list_check_points[player1_stage])  
+                    temp_board = spf.move_in_1_direction(new_board_player1, 'U', list_check_points[stage_list[player1_stage]])  
                     if new_board_player1 != temp_board:
                         new_board_player1 = temp_board
                         moved_player1 = True
                     player1 = pygame.image.load(c.assets_path + 'playerup.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
                 if event.key == pygame.K_a:
-                    temp_board = spf.move_in_1_direction(new_board_player1, 'L', list_check_points[player1_stage])  
+                    temp_board = spf.move_in_1_direction(new_board_player1, 'L', list_check_points[stage_list[player1_stage]])  
                     if new_board_player1 != temp_board:
                         new_board_player1 = temp_board
                         moved_player1 = True
                     player1 = pygame.image.load(c.assets_path + 'playerleft.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
                 if event.key == pygame.K_s:
-                    temp_board = spf.move_in_1_direction(new_board_player1, 'D', list_check_points[player1_stage])  
+                    temp_board = spf.move_in_1_direction(new_board_player1, 'D', list_check_points[stage_list[player1_stage]])  
                     if new_board_player1 != temp_board:
                         new_board_player1 = temp_board
                         moved_player1 = True
                     player1 = pygame.image.load(c.assets_path + 'playerdown.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
                 if event.key == pygame.K_d:
-                    temp_board = spf.move_in_1_direction(new_board_player1, 'R', list_check_points[player1_stage])  
+                    temp_board = spf.move_in_1_direction(new_board_player1, 'R', list_check_points[stage_list[player1_stage]])  
                     if new_board_player1 != temp_board:
                         new_board_player1 = temp_board
                         moved_player1 = True
@@ -129,28 +137,28 @@ def sokoban_2_player(screen, stage_list):
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
                     
                 if event.key == pygame.K_UP:
-                    temp_board = spf.move_in_1_direction(new_board_player2, 'U', list_check_points[player2_stage])  
+                    temp_board = spf.move_in_1_direction(new_board_player2, 'U', list_check_points[stage_list[player2_stage]])  
                     if new_board_player2 != temp_board:
                         new_board_player2 = temp_board
                         moved_player2 = True
                     player2 = pygame.image.load(c.assets_path + 'playerup.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
                 if event.key == pygame.K_LEFT:
-                    temp_board = spf.move_in_1_direction(new_board_player2, 'L', list_check_points[player2_stage])  
+                    temp_board = spf.move_in_1_direction(new_board_player2, 'L', list_check_points[stage_list[player2_stage]])  
                     if new_board_player2 != temp_board:
                         new_board_player2 = temp_board
                         moved_player2 = True
                     player2 = pygame.image.load(c.assets_path + 'playerleft.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
                 if event.key == pygame.K_DOWN:
-                    temp_board = spf.move_in_1_direction(new_board_player2, 'D', list_check_points[player2_stage])  
+                    temp_board = spf.move_in_1_direction(new_board_player2, 'D', list_check_points[stage_list[player2_stage]])  
                     if new_board_player2 != temp_board:
                         new_board_player2 = temp_board
                         moved_player2 = True
                     player2 = pygame.image.load(c.assets_path + 'playerdown.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
                 if event.key == pygame.K_RIGHT:
-                    temp_board = spf.move_in_1_direction(new_board_player2, 'R', list_check_points[player2_stage])  
+                    temp_board = spf.move_in_1_direction(new_board_player2, 'R', list_check_points[stage_list[player2_stage]])  
                     if new_board_player2 != temp_board:
                         new_board_player2 = temp_board
                         moved_player2 = True
@@ -164,27 +172,25 @@ def sokoban_2_player(screen, stage_list):
             drawBoard(screen, new_board_player1, 1, player1)
             drawBoard(screen, new_board_player2, 2, player2)
         else:
-            drawBoard(screen, maps[player1_stage], 1, player1)
-            drawBoard(screen, maps[player2_stage], 2, player2)
-            new_board_player1 = maps[player1_stage]
-            new_board_player2 = maps[player2_stage]
+            drawBoard(screen, maps[stage_list[player1_stage]], 1, player1)
+            drawBoard(screen, maps[stage_list[player2_stage]], 2, player2)
+            new_board_player1 = maps[stage_list[player1_stage]]
+            new_board_player2 = maps[stage_list[player2_stage]]
             
         pygame.display.update()
         
-        if spf.check_win(new_board_player1, list_check_points[player1_stage]):
+        if spf.check_win(new_board_player1, list_check_points[stage_list[player1_stage]]):
             player1_stage+=1
-            score_player1+=1
-            drawBoard(screen, maps[player1_stage], 1, player1)
-            drawBoard(screen, maps[player2_stage], 2, player2)
-            new_board_player1 = maps[player1_stage]
-            new_board_player2 = maps[player2_stage]
-        elif spf.check_win(new_board_player2, list_check_points[player2_stage]):
+            drawBoard(screen, maps[stage_list[player1_stage]], 1, player1)
+            drawBoard(screen, maps[stage_list[player2_stage]], 2, player2)
+            new_board_player1 = maps[stage_list[player1_stage]]
+            new_board_player2 = maps[stage_list[player2_stage]]
+        elif spf.check_win(new_board_player2, list_check_points[stage_list[player2_stage]]):
             player2_stage+=1
-            score_player2+=1
-            drawBoard(screen, maps[player1_stage], 1, player1)
-            drawBoard(screen, maps[player2_stage], 2, player2)
-            new_board_player1 = maps[player1_stage]
-            new_board_player2 = maps[player2_stage]
+            drawBoard(screen, maps[stage_list[player1_stage]], 1, player1)
+            drawBoard(screen, maps[stage_list[player2_stage]], 2, player2)
+            new_board_player1 = maps[stage_list[player1_stage]]
+            new_board_player2 = maps[stage_list[player2_stage]]
             
         # handle endgame
         if (timer - (current_time-start_time-1000) - play_time)//1000 == 0:
@@ -284,7 +290,7 @@ def convert_time_to_str(timer, current_time, start_time, play_time):
     return result
         
 def create_control(control_game):
-    icons = ['Play.png', 'Pause.png', 'Replay.png', 'SoundOff.png', 'Home.png']
+    icons = ['Play.png', 'Pause.png', 'Replay.png', 'SoundOn.png', 'Home.png']
     for i in range(5):
         image = pygame.image.load(c.png_path + "square.png")
         image_hover = pygame.image.load(c.png_path + 'hover_' + "square.png")
