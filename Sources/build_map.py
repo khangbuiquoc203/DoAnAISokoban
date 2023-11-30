@@ -10,6 +10,7 @@ import const as c
 import sys
 import Algorithms as agr
 import keyboard
+import time
 from enum import Enum
 from datetime import datetime
 '''
@@ -512,8 +513,11 @@ Wishing you fun and challenging times!"""
             save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
         if spf.check_win(new_board, list_check_points[stage]):
+            control_info[1] = controls.Label(c.font_title_path, "Move: "+str(move_count), size=38, color=c.TITLE_COLOR, location_topleft=(540,20))
+            control_info[1].draw(screen)
+            pygame.display.update()
             print(listdirect)
-            select_in_menu = menu(screen, user, stage, 1000-move_count*seconds, seconds, move_count-1)
+            select_in_menu = menu(screen, user, stage, 1000-move_count*seconds, seconds, move_count)
             start_time = pygame.time.get_ticks()
             move_count = 0
             if select_in_menu == 0:

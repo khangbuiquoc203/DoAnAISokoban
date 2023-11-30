@@ -403,7 +403,7 @@ def AI(screen):
     stage_list  = list(range(30))
     random.shuffle(stage_list)
 
-    build_map_play_with_AI.sokoban_play_with_AI(screen, stage_list, is_play_music)
+    #build_map_play_with_AI.sokoban_play_with_AI(screen, stage_list, is_play_music)
 
 # SCREEN MAP
 def map(screen, level):
