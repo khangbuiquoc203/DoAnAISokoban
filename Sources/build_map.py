@@ -11,6 +11,7 @@ import sys
 import Algorithms as agr
 import keyboard
 from enum import Enum
+from datetime import datetime
 '''
 //========================//
 //         PYGAME         //
@@ -265,6 +266,26 @@ def sokoban(screen, stage, user, is_play_music):
     elapsed_time = 0
     # Move
     move_count = 0
+    
+    font = pygame.font.SysFont(c.font_textchat_path, 24)
+    area = pygame.Rect(10, 220, 520, 400)
+    box = area.inflate(2, 2)
+    pygame.draw.rect(screen, c.BLUE, box, 1)
+    
+    current_time_chat = datetime.now()
+    year = current_time_chat.year
+    month = current_time_chat.month
+    day = current_time_chat.day
+    
+    daydate = f"TESTDAY: {day}/{month}/{year} STAGE: {stage+1}"
+    
+    welcomemessage=f"""{daydate}
+Welcome to Sokoban!
+Showcase your logic skills and move the boxes to the target.
+Wishing you fun and challenging times!"""
+    message = controls.TextScroll(area, font, c.BLACK, c.GREY, welcomemessage, ms_per_line=500)
+    save_log_chat(welcomemessage)
+    
     while running:     
         # Draw stage
         control_info[0] = controls.Label(c.font_title_path, "Lv: "+str(stage+1), size=38, color=c.TITLE_COLOR, location_topleft=(60,20))
@@ -284,7 +305,16 @@ def sokoban(screen, stage, user, is_play_music):
             
         for i in control_game:
             i.draw(screen)
-        pygame.draw.rect(screen, 'white', pygame.Rect(60, 220, 400, 360))
+        #pygame.draw.rect(screen, 'white', pygame.Rect(60, 220, 400, 360))
+        
+        
+        
+        # Display the scrolling text
+        message.update()
+        message.draw(screen)
+        
+        
+        
         
         #display(stage)
         #draw_text("State visited: " + str(num_states_visited), textsmall_font, (255, 255, 255), 700, 15)
@@ -320,15 +350,35 @@ def sokoban(screen, stage, user, is_play_music):
             if algorithm == "HILL": 
                 list_board = agr.HILL(maps[stage], list_check_points[stage])
                 num_states_visited = agr.number_states_visited()
-            print("Số trạng thái đã duyệt: ",list_board[1])
+            
             stateLenght = len(list_board[0]) if list_board != [] else 0
+            
             AI_solving= True
             currentState = 0
             # Handle time
             current_time = pygame.time.get_ticks()
+            current_time_chat = datetime.now()
+            hour = current_time_chat.hour
+            minute = current_time_chat.minute
+            second = current_time_chat.second
+            
+            
+            if list_board == []:
+                print("CÁI NÀY TÌM KHÔNG CÓ RA")
+                list_board.append(0)  # Thêm một phần tử để có ít nhất 1 phần tử trong danh sách
+                list_board.append(num_states_visited)
+                AI_solving = False
+                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms "+"NOT FOUND!!!")
+                save_log_chat("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms "+"NOT FOUND!!!")
+            else:
+                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms STEP: " +str(len(list_board[0])-1))
+                save_log_chat("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State="+str(list_board[1])+" Time: "+str(current_time-start_time)+" ms STEP: " +str(len(list_board[0])-1))
+            print("Số trạng thái đã duyệt: ",list_board[1])
             print("Thời gian AI xử lí: "+str(current_time-start_time))
+            
             start_time = pygame.time.get_ticks()
             listdirect = []
+            
      
         if len(list_board) > 0 and AI_solving == True:
             clock.tick(1)
@@ -352,7 +402,9 @@ def sokoban(screen, stage, user, is_play_music):
                 currentState = currentState + 1
                 moved = True
             else:
-                AI_solving = False
+                print("CLOCKTICK RESET")
+                list_board=[]
+                AI_solving == False
                 clock.tick(120)
         
         if control_game[enum_of_control_game.ALGORITHM.value].is_clicked():
@@ -379,7 +431,7 @@ def sokoban(screen, stage, user, is_play_music):
             new_board = maps[stage]
             moved == False
             move_count = 0
-            start_time = pygame.time.get_ticks()
+            start_time=pygame.time.getticks()
              
         if control_game[enum_of_control_game.UNDO.value].is_clicked():
             pygame.mixer.Sound(c.click_sound_path).play()
@@ -460,8 +512,9 @@ def sokoban(screen, stage, user, is_play_music):
             new_board = maps[stage]
         else:
             drawBoard(new_board)
+                    
         pygame.display.update()
-        if backward_matrix != new_board:
+        if backward_matrix !=new_board:
             save_matrix_to_txt(backward_matrix,backward_path + '\\backward.txt')
         
         if spf.check_win(new_board, list_check_points[stage]):
@@ -481,10 +534,11 @@ def sokoban(screen, stage, user, is_play_music):
                     drawBoard(maps[stage])
                     new_board = maps[stage]
                     moved == False
-                drawBoard(maps[stage+1])
-                new_board = maps[stage+1]
-                stage+=1
-                moved = False
+                else:
+                    drawBoard(maps[stage+1])
+                    new_board = maps[stage+1]
+                    stage+=1
+                    moved = False
         
 
 
@@ -564,6 +618,15 @@ def load_matrix_from_txt(file_path):
 
 def Mbox(title, text, style):
     ctypes.windll.user32.MessageBoxW(0, text, title, style)
+
+def save_log_chat(text_to_copy):
+    # Tên tệp tin bạn muốn chép vào
+    file_path = c.logchat_path
+    
+    # Mở tệp tin để ghi (nếu tệp không tồn tại, nó sẽ được tạo mới)
+    with open(file_path, "a") as file:
+        file.write("\n")
+        file.write(text_to_copy)
 
 
 '''

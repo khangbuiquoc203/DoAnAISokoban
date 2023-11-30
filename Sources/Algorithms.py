@@ -469,7 +469,7 @@ def HILL(board, list_check_point):
         
         for next_pos in list_can_move:
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
-            num_states_visited += 1
+            
             if spf.is_board_exist(new_board, list_state):
                 continue
             if spf.is_board_can_not_win(new_board, list_check_point):
@@ -493,7 +493,7 @@ def HILL(board, list_check_point):
             return (best_next_state.get_line(), len(list_state))
     
         list_state.append(best_next_state)
-        
+        num_states_visited += 1
         end_time = time.time()
         if end_time - start_time > spf.TIME_OUT:
             return []
