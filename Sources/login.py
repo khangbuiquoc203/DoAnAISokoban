@@ -15,6 +15,7 @@ def init():
     pygame.init()
     screen = pygame.display.set_mode((c.SCREEN_WIDTH, c.SCREEN_HEIGHT)) 
     pygame.display.set_caption('Sokoban')
+    pygame.display.set_icon(pygame.image.load(c.assets_path + '\\icon_image.png'))
     
     pygame.mixer.init()
     pygame.mixer.music.load(c.assets_path+'music.mp3')  # Đặt đường dẫn đến file nhạc của bạn

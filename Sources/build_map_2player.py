@@ -108,28 +108,28 @@ def sokoban_2_player(screen, stage_list, is_play_music):
             
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and is_pause == False:
-                if event.key == setting.up_player1:
+                if event.key == setting.up_player2:
                     temp_board = spf.move_in_1_direction(new_board_player1, 'U', list_check_points[stage_list[player1_stage]])  
                     if new_board_player1 != temp_board:
                         new_board_player1 = temp_board
                         moved_player1 = True
                     player1 = pygame.image.load(c.assets_path + 'playerup.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
-                if event.key == setting.left_player1:
+                if event.key == setting.left_player2:
                     temp_board = spf.move_in_1_direction(new_board_player1, 'L', list_check_points[stage_list[player1_stage]])  
                     if new_board_player1 != temp_board:
                         new_board_player1 = temp_board
                         moved_player1 = True
                     player1 = pygame.image.load(c.assets_path + 'playerleft.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
-                if event.key == setting.down_player1:
+                if event.key == setting.down_player2:
                     temp_board = spf.move_in_1_direction(new_board_player1, 'D', list_check_points[stage_list[player1_stage]])  
                     if new_board_player1 != temp_board:
                         new_board_player1 = temp_board
                         moved_player1 = True
                     player1 = pygame.image.load(c.assets_path + 'playerdown.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
-                if event.key == setting.right_player1:
+                if event.key == setting.right_player2:
                     temp_board = spf.move_in_1_direction(new_board_player1, 'R', list_check_points[stage_list[player1_stage]])  
                     if new_board_player1 != temp_board:
                         new_board_player1 = temp_board
@@ -137,28 +137,28 @@ def sokoban_2_player(screen, stage_list, is_play_music):
                     player1 = pygame.image.load(c.assets_path + 'playerright.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
                     
-                if event.key == setting.up_player2:
+                if event.key == setting.up_player1:
                     temp_board = spf.move_in_1_direction(new_board_player2, 'U', list_check_points[stage_list[player2_stage]])  
                     if new_board_player2 != temp_board:
                         new_board_player2 = temp_board
                         moved_player2 = True
                     player2 = pygame.image.load(c.assets_path + 'playerup.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
-                if event.key == setting.left_player2:
+                if event.key == setting.left_player1:
                     temp_board = spf.move_in_1_direction(new_board_player2, 'L', list_check_points[stage_list[player2_stage]])  
                     if new_board_player2 != temp_board:
                         new_board_player2 = temp_board
                         moved_player2 = True
                     player2 = pygame.image.load(c.assets_path + 'playerleft.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
-                if event.key == setting.down_player2:
+                if event.key == setting.down_player1:
                     temp_board = spf.move_in_1_direction(new_board_player2, 'D', list_check_points[stage_list[player2_stage]])  
                     if new_board_player2 != temp_board:
                         new_board_player2 = temp_board
                         moved_player2 = True
                     player2 = pygame.image.load(c.assets_path + 'playerdown.png')
                     pygame.mixer.Sound(c.assets_path + 'movesound.wav').play()
-                if event.key == setting.right_player2:
+                if event.key == setting.right_player1:
                     temp_board = spf.move_in_1_direction(new_board_player2, 'R', list_check_points[stage_list[player2_stage]])  
                     if new_board_player2 != temp_board:
                         new_board_player2 = temp_board

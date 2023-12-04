@@ -184,7 +184,7 @@ def drawBoard(board):
         return
 
 ''' VARIABLE '''
-algorithm = algorithm_list[0]
+algorithm = algorithm_list[algorithm_number]
 
 ''' Controls '''
 def create_control_game(control_game, control_info):
@@ -192,7 +192,7 @@ def create_control_game(control_game, control_info):
 
     texts = []
     font = pygame.font.Font(c.font_text_path, c.TEXT_SIZE-3)
-    texts.append(font.render("BFS", True, 'black'))
+    texts.append(font.render(algorithm, True, 'black'))
     icon_play = pygame.image.load(c.icon_path + 'Play.png')
     icon_pause = pygame.image.load(c.icon_path + 'Pause.png')
     texts.append(icon_play)
@@ -246,7 +246,7 @@ def sokoban(screen, stage, user, is_play_music):
     control_game = [] #0: algorithm, 1: play, 2: pause, 3: home, 4: replay, 5: undo, 6: sound
     control_info = [] #0: lv, 1: move, 2: time
     create_control_game(control_game, control_info)
-    
+    pygame.display.set_icon(icon_image)
     running = True 
     global algorithm
     global player
@@ -271,7 +271,7 @@ def sokoban(screen, stage, user, is_play_music):
     # Move
     move_count = 0
     
-    font = pygame.font.SysFont(c.font_textchat_path, 24)
+    font = pygame.font.SysFont(c.font_textchat_path, 30)
     area = pygame.Rect(10, 220, 520, 400)
     box = area.inflate(2, 2)
     pygame.draw.rect(screen, c.BLUE, box, 1)
@@ -283,10 +283,7 @@ def sokoban(screen, stage, user, is_play_music):
     
     daydate = f"TESTDAY: {day}/{month}/{year} STAGE: {stage+1}"
     
-    welcomemessage=f"""{daydate}
-Welcome to Sokoban!
-Showcase your logic skills and move the boxes to the target.
-Wishing you fun and challenging times!"""
+    welcomemessage=""
     message = controls.TextScroll(area, font, c.BLACK, c.GREY, welcomemessage, ms_per_line=500)
     save_log_chat(welcomemessage)
     
@@ -300,7 +297,7 @@ Wishing you fun and challenging times!"""
             seconds = elapsed_time // 1000
             control_info[2] = controls.Label(c.font_title_path, "Time: "+str(seconds//60)+":"+str(seconds%60), size=38, color=c.TITLE_COLOR, location_topleft=(850,20))
         screen.blit(init_background, (0, 0))
-        pygame.display.set_icon(icon_image)
+        
         # Handle move
         control_info[1] = controls.Label(c.font_title_path, "Move: "+str(move_count), size=38, color=c.TITLE_COLOR, location_topleft=(540,20))
             
@@ -369,11 +366,11 @@ Wishing you fun and challenging times!"""
                 list_board.append(0)  # Thêm một phần tử để có ít nhất 1 phần tử trong danh sách
                 list_board.append(num_states_visited)
                 AI_solving = False
-                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s "+"NOT FOUND!!!")
-                save_log_chat("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s "+"NOT FOUND!!!")
+                message.add_line(str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s "+"NOT FOUND!!!")
+                save_log_chat(str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s "+"NOT FOUND!!!")
             else:
-                message.add_line("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s STEP: " +str(len(list_board[0])-1))
-                save_log_chat("["+f"{hour}:{minute}:{second}"+"][STAGE:"+str(stage+1)+"]"+str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s STEP: " +str(len(list_board[0])-1))
+                message.add_line(str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s STEP: " +str(len(list_board[0])-1))
+                save_log_chat(str(algorithm)+": State: "+str(list_board[1])+" Time: "+str(float(current_time-start_time)/1000)+" s STEP: " +str(len(list_board[0])-1))
             print("Số trạng thái đã duyệt: ",list_board[1])
             print("Thời gian AI xử lí: "+str(current_time-start_time))
             
